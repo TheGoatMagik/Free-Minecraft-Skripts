@@ -9,3 +9,5 @@ Tested all skripts with:
 
 You can change the player permissions for every file aswell as some of the messages.
 These scripts may not have the best quality, but I gave my best and I think they are still useful.
+
+Please read all lines that begin with a "#" before using these scripts.
