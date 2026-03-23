@@ -38,7 +38,7 @@ command /spawn:
 
 #======= The following lines are for extras such as respawning at Spawn or being able to delete Spawn. =======
 
-on repspawn:
+on respawn:
 	if {spawn} is set:
 		wait 1 tick
 		teleport player to {spawn}
