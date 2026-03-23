@@ -1,0 +1,59 @@
+command /setspawn:
+	permission: set.spawn
+	trigger:
+		set {spawn} to location of player
+		send "<#18FF00>Spawnlocation set your current location!"
+
+command /spawn:
+	trigger:
+		if spawn is set:
+
+#======= You can remove the following lines if you want players to be teleported instantly =======
+
+			set {_loc} to location of player
+			send ""
+			send "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
+			send ""
+			set {_number} to 5
+			loop 5 times:
+				if {_loc} = location of player:
+					send "<#FFE300> %{_number}%"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+
+#=================================================================================================
+		
+
+			teleport player to {spawn}
+			send ""
+			send "<#18FF00>You've been teleported to Spawn!"
+			send ""
+		
+		else:
+			send "<#FF0000>No Spawn set! Please tell an Admin!"
+
+
+#======= The following lines are for extras such as respawning at Spawn or being able to delete Spawn. =======
+
+on repspawn:
+	if {spawn} is set:
+		wait 1 tick
+		teleport player to {spawn}
+		send "<#18FF00>You respawned at Spawn!"
+	else:
+		send "<#FF0000>Couldn't respawn at Spawn, because no Spawn is set! Please tell an Admin!"
+
+command /deletespawn:
+	permission: delete.spawn
+	trigger:
+		delete {spawn}
+		send "<#FF0000>Spawn has been deleted!"
+
+#==============================================================================================================
+
+
+
+
