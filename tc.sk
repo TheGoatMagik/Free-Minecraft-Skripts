@@ -1,8 +1,8 @@
 command /tc [<text>]:
-    permission: staff.chat
+	permission: staff.chat
 	trigger:
 		if arg-1 is set:
-        	set {_p} to player
+			set {_p} to player
 			set {_msg} to arg-1
 			loop all players:
 				if loop-player has permission "staff.chat":
