@@ -1,0 +1,110 @@
+#======= Mute system using /mute with muted time =======
+command /mute <player> [<integer>]:
+	permission: mute.use
+	trigger:
+		set {_p} to arg-1
+		set {_t} to arg-2
+		if {mutedperma.%{_p}%} is true:
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>This player is already permanently muted, to unmute use '/unmute %{_p}%'!"
+			stop
+		if {_p} is player:
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>You can't mute yourself!"
+			stop
+		if {_t} is not set:
+			set {mutedperma.%{_p}%} to true
+			set {ismuted.%{_p}%} to true
+			send "&8[<#F3CF00>Mutesystem&8] <#18FF00>You muted %{_p}% permanently, to unmute use '/unmute %{_p}%'!"
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>You got muted permanently!" to {_p}
+			stop
+		if {_t} is set:
+			add {_t} to {muted.%{_p}%}
+			set {ismuted.%{_p}%} to true
+			send "&8[<#F3CF00>Mutesystem&8] <#18FF00>You muted %{_p}% for %{_t}% Minutes, to unmute use '/unmute %{_p}%'!"
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>You got muted for %{_t}% Minutes!" to {_p}
+			stop
+
+#======= Automatic Mute duration decrease =======
+every 1 minute:
+	loop all players:
+		if {ismuted.%loop-player%} = true:
+			if {muted.%loop-player%} > 0:
+				remove 1 from {muted.%loop-player%}
+			if {muted.%loop-player%} < 1:
+				set {muted.%loop-player%} to 0
+				send "&8[<#F3CF00>Mutesystem&8] <#18FF00>You got unmuted!" to loop-player
+				set {ismuted.%loop-player%} to false
+
+#======= /unmute command =======
+command /unmute <player>:
+	permission: unmute.use
+	trigger:
+		if {ismuted.%arg-1%} = false:
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>%arg-1% isn't muted!"
+			stop
+		set {ismuted.%arg-1%} to false
+		set {muted.%arg-1%} to 0
+		set {mutedperma.%arg-1%} to false
+		send "&8[<#F3CF00>Mutesystem&8] <#18FF00>You got unmuted!" to arg-1
+		send "&8[<#F3CF00>Mutesystem&8] <#18FF00>You unmuted %arg-1%!"
+
+#======= Setting Variables =======
+on join:
+	if {ismuted.%player%} is not set:
+		set {ismuted.%player%} to false
+	if {muted.%player%} is not set:
+		set {muted.%player%} to 0
+	if {mutedperma.%player%} is not set:
+		set {mutedperma.%player%} to false
+
+on load:
+	set {muted.chat} to false
+
+#======= Globalmute Command =======
+#======= Important: Your players should be able to somehow tell Teammembers, that Chat is disabled! =======
+command /globalmute:
+	permission: globalmute.use
+	trigger:
+		if {muted.chat} is not true:
+			set {muted.chat} to true
+			broadcast "&8[<#F3CF00>Mutesystem&8] <#FF0000>The Chat got muted!"
+			stop
+		else:
+			send "&8[<#F3CF00>Mutesystem&8] <#FF0000>The Chat is already muted!"
+
+command /globalunmute:
+	permission: globalunmute.use
+	trigger:
+		if {muted.chat} is true:
+			set {muted.chat} to false
+			broadcast "&8[<#F3CF00>Mutesystem&8] <#18FF00>The Chat got unmuted!"
+			stop
+		else:
+			broadcast "&8[<#F3CF00>Mutesystem&8] <#FF0000>The Chat isn't muted!"
+
+#======= The following lines prevent muted players from writing any messages =======
+on chat:
+	if player has permission "mute.override":
+		stop
+	if {muted.chat} is true:
+		cancel event
+		send "&8[<#F3CF00>Mutesystem&8] <#FF0000>You can't send messages, because the Chat is muted!"
+		stop
+	if {ismuted.%player%} is true:
+		cancel event
+		send "&8[<#F3CF00>Mutesystem&8] <#FF0000>You can't send messages, because you are muted!"
+		stop
+	else:
+		stop
+
+#======= Chatclear Command =======		
+command /chatclear:
+	aliases: clearchat, cc
+	permission: chatclear.use
+	trigger:
+		loop 100 times:
+			broadcast ""
+		broadcast "&8-----------------------------------------------------"
+		broadcast "<#18FF00>The Chat got cleared by <#E3D66C>%player%<#18FF00>!"
+		broadcast "&8-----------------------------------------------------"
+
+		
