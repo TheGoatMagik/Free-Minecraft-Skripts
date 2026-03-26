@@ -16,7 +16,6 @@ on death:
 			set line 2 of lore of {_skull} to "<#FFFFFF>Killed by <#F3CF00>%{_k}% <#FFFFFF>on <#F3CF00>%{Date}% <#FFFFFF>at <#F3CF00>%{Time}%"
 			set line 3 of lore of {_skull} to "<#FFFFFF>Killed using <#F3CF00>{_tool}"
 			set line 4 of lore of {_skull} to "<#A7A7A7>--------------------------------------"
-			stop
 		else:
 			set line 1 of lore of {_skull} to "<#A7A7A7>--------------------------------------"
 			set line 2 of lore of {_skull} to "<#FFFFFF>Killed by <#F3CF00>%{_k}% <#FFFFFF>on <#F3CF00>%{Date}% <#FFFFFF>at <#F3CF00>%{Time}%"
