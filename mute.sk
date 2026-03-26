@@ -1,5 +1,5 @@
 #======= Mute system using /mute with muted time =======
-command /mute <player> [<integer>]:
+command /mute <offlineplayer> [<integer>]:
 	permission: mute.use
 	trigger:
 		set {_p} to arg-1
@@ -35,7 +35,7 @@ every 1 minute:
 				set {ismuted.%loop-player%} to false
 
 #======= /unmute command =======
-command /unmute <player>:
+command /unmute <offlineplayer>:
 	permission: unmute.use
 	trigger:
 		if {ismuted.%arg-1%} = false:
