@@ -1,0 +1,53 @@
+#======= This command calculates for you directly ingame =======
+
+
+options:
+	prefix: &8[&x&F&3&C&F&0&0Calculator&8]
+
+
+command /calculate <integer> <text> <integer>:
+	trigger:
+		if arg-1 is not a number:
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+			stop
+		if arg-1 is not set:
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+			stop
+		if arg-2 is not set:
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+			stop
+		if arg-3 is not a number:
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+			stop
+		if arg-3 is not set:
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+			stop
+
+
+#======= Proving the Operators =======
+		if arg-2 is "+":
+			send "{@prefix} <#F3CF00>%arg-1% + %arg-3% = <#18FF00>%arg-1 + arg-3%<#F3CF00>!"
+			stop
+		if arg-2 is "-":
+			send "{@prefix} <#F3CF00>%argument 1% - %argument 3% = <#18FF00>%argument 1 - argument 3%<#F3CF00>!"
+			stop
+		if arg-2 is "*":
+			send "{@prefix} <#F3CF00>%arg-1% * %arg-3% = <#18FF00>%arg-1 * arg-3%<#F3CF00>!"
+			stop
+		if arg-2 is "/":
+			send "{@prefix} <#F3CF00>%arg-1% / %arg-3% = <#18FF00>%arg-1 / arg-3%<#F3CF00>!"
+			stop
+		if arg-2 is "%%":
+			set {_result} to (arg-1 / arg-3) * 100
+			send "{@prefix} <#F3CF00>%arg-1% of %arg-3% = <#18FF00>%{_result}%<#F3CF00>%%"
+			stop
+            
+		else:
+			send "{@prefix} <#FF0000>That is not a valid operator!"
+			send "{@prefix} <#FF0000>Correct usage: '/calculate <number> <operator> <number>'!"
+            
+#======= Tab completion =======
+on tab complete for "/calculate":
+	set tab completion for position 1 to "<number>"
+	set tab completion for position 2 to "+" and "-" and "*" and "/" and "%%"
+	set tab completion for position 3 to "<number>"
