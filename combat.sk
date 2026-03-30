@@ -1,7 +1,8 @@
-#Warning: This Skript is kot tested and unfinished!
+#======= Warning: This Skript is not tested and unfinished! =======
 options:
 	combattime: 30
 
+#======= General Combat system =======
 on damage:
 	if victim is a player:
 		set {_v} to victim
@@ -21,6 +22,7 @@ on damage:
 		set {combat.%victim%} to {@combattime}
 		set {combat.%attacker%} to {@combattime}
 
+#======= Combat duration decrease =======
 every 1 second:
 	loop {combat::*}
 	remove 1 from {combat.%loop-player%}
@@ -30,6 +32,7 @@ every 1 second:
 		send "&aCombat ended!" to loop-player
 		remove loop-player from {combat::*}
 
+#======= Killing users that quit during combat =======
 on quit:
 	if {combat.%player%} = 0:
 		stop
@@ -44,6 +47,7 @@ on join:
 		send "&cYou habe been killed, because you logged out during combat!"
 		set {combatkilled.%player%} to false
 
+#======= Resetting on death =======
 on death:
 	if {combat.%victim%} > 0:
 		set {combat.%victim%} to 0
