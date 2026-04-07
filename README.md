@@ -21,7 +21,7 @@ If a script is not working for you, please check your plugins and their versions
 Please read all lines that begin with a "#" before using these scripts.
 You can replace all Hex Colorcodes with your own.
 
-## **⌨️ Still in process:**
+## **⌨️ Unfinished:**
 
 I'm still working on this, but if you have more Ideas, let me know!
 
