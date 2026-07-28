@@ -1,0 +1,7 @@
+#========= Unfinished!
+command /invsee <player>:
+    permission: invsee.use
+    trigger:
+        set {player} to arg-1
+        set {inv.%{player}%} to a new chest inventorywith 6 rows named "<#F3CF00>%player%<#FFFFFF>'s inventory"
+        loop 
