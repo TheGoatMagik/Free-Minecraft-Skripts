@@ -6,7 +6,7 @@ command /setspawn:
 
 command /spawn:
 	trigger:
-		if spawn is set:
+		if {spawn} is set:
 
 #======= You can remove the following lines if you want players to be teleported instantly =======
 
@@ -54,7 +54,7 @@ command /deletespawn:
 
 on join:
 	teleport player to {spawn}
-
+	send "
 #==============================================================================================================
 
 
