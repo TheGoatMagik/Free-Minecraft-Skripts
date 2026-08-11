@@ -1,0 +1,41 @@
+on death:
+    if gamemode of attacker is survival:
+        if victim is a player:
+            if attacker is a player:
+                add 1 to max health of attacker
+                subtract 1 from max health of victim
+                broadcast "<#18FF00>%attacker% <#FFE300>has stolen a heart from <#FF0000>%victim%<#FFE300>!"
+        
+        
+command /maxhealth <player> <integer>:
+    permission: health.set
+    description: "<#FF0000>Use /maxhealth <player> <number>!"
+    trigger:
+        set max health of arg-1 to arg-2
+        send "<#18FF00>You succesfully set %arg-1%'s max health to %arg-2%!" to player
+        
+
+command /withdraw <integer>:
+    trigger:
+        set {_health} to player's max health
+        if arg-1 >= {_health}:
+            send "<#FF0000>You cannot withdraw this amount of hearts!"
+            stop
+        else:
+            subtract arg-1 from max health of player
+            give player arg-1 of nether star named "<#FF0000>Heart" with lore "<#FF0000>Some player's heart"
+            send "<#FF0000>You withdrawed %arg-1% of your hearts"
+            
+on right click with nether star:
+    if name of player's tool is "<#FF0000>Heart":
+        if line 1 of lore of player's tool is "<#FF0000>Some player's heart":
+            set {_number} to amount of player's tool
+            set player's tool to air
+            add {_number} to player's max health
+            set health of player to max health of player
+
+command /seemaxhealth <player>:
+    permission: see.maxhealth
+    trigger:
+        set {_amount} to max health of arg-1
+        send "<#FFE300>%arg-1%'s max health is <#18FF00>%{_amount}% <#FFE300>."
