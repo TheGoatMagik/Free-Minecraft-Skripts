@@ -44,7 +44,12 @@ on first join:
 command /pay <player> <integer>:
 	trigger:
 		if arg-2 > {money.%player%}:
-			send ""
+			send "<#FF0000>You don't have this amount of money!"
+		else:
+			add arg-2 to {money.%arg-1%}
+			subtract arg-2 from {money.%player%}
+			send "You have succesfully paid %arg-1% %arg-2% Money!"
+			send "You received %arg-2% Money from %player%!" to arg-1
 
 
 
