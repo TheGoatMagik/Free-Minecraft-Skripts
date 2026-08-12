@@ -1,0 +1,10 @@
+#======= Change the Scoreboards lines with whatever you want! =======
+on join:
+	set title of player's scoreboard to "My Scoreboard"
+	set line 1 of player's scoreboard to ""
+	set line 2 of player's scoreboard to ""
+	set line 3 of player's scoreboard to ""
+	set line 4 of player's scoreboard to ""
+	set line 5 of player's scoreboard to ""
+	set line 6 of player's scoreboard to ""
+	set line 7 of player's scoreboard to ""
