@@ -19,7 +19,7 @@ If a script is not working for you, please check your plugins and their versions
 ## **❗️ Important:**
 
 Please read all lines that begin with a "#" before using these scripts.
-You can replace all Hex Colorcodes with your own.
+You can replace all Hex Colorcodes aswell as names or messages ("...") with your own.
 
 ## **⌨️ Unfinished:**
 
