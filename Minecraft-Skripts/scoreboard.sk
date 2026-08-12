@@ -1,10 +1,51 @@
+#======= Unfinished!!!! =======
 #======= Change the Scoreboards lines with whatever you want! =======
+
+function reloadScoreboard(p: player):
+	set title of {_p}'s scoreboard to "My Scoreboard"
+	set line 1 of {_p}'s scoreboard to ""
+	set line 2 of {_p}'s scoreboard to "⚔️ Kills: "
+	set line 3 of {_p}'s scoreboard to "☠️ Deaths:"
+	set line 4 of {_p}'s scoreboard to "⏰ Playtime: "
+	set line 5 of {_p}'s scoreboard to "💸 Money: "
+	set line 6 of {_p}'s scoreboard to ""
+
+#======= Load Scoreboard on join =======
+
 on join:
-	set title of player's scoreboard to "My Scoreboard"
-	set line 1 of player's scoreboard to ""
-	set line 2 of player's scoreboard to ""
-	set line 3 of player's scoreboard to ""
-	set line 4 of player's scoreboard to ""
-	set line 5 of player's scoreboard to ""
-	set line 6 of player's scoreboard to ""
-	set line 7 of player's scoreboard to ""
+	function reloadScoreboard(player)
+
+#======= Playtimecounter =======
+
+every one minute:
+	loop all players:
+		add 1 to {playtime.%loop-player%}
+		if {playtime.%loop-player%} = 60:
+			set {playtime.%loop-player%} to 0
+			add 1 {playtimehours.%loop-player%}
+			if {playtimehours.%loop-player%} = 24:
+				set {playtimehours.%loop-player%} to 0
+				add 1 to {playtimedays.%loop-player%}
+		function reloadScoreboard(%loop-player%)
+
+#======= Kill and Death counter =======
+
+on death:
+	if victim is a player:
+		add 1 to {deaths.%victim%}
+		if attacker is a player:
+			add 1 to {kills.%attacker%}
+
+#======= Money System =======
+
+on first join:
+	set {money.%player%} to 1000 #Change the Money to whatever a player should receive on his first join
+
+command /pay <player> <integer>:
+	trigger:
+		if arg-2 > {money.%player%}:
+			send ""
+
+
+
+
