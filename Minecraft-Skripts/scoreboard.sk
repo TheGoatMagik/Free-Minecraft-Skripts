@@ -4,12 +4,12 @@
 function reloadScoreboard(p: player):
 	set title of {_p}'s scoreboard to "My Scoreboard"
 	set line 1 of {_p}'s scoreboard to ""
-	set line 2 of {_p}'s scoreboard to "⚔️ Kills: "
-	set line 3 of {_p}'s scoreboard to "☠️ Deaths:"
-	set line 4 of {_p}'s scoreboard to "⏰ Playtime: "
-	set line 5 of {_p}'s scoreboard to "💸 Money: "
-	set line 6 of {_p}'s scoreboard to ""
-
+	set line 2 of {_p}'s scoreboard to "<#38FF12>⚔️ Kills: <#FFDD00>%{kills.%{_p}%}%"
+	set line 3 of {_p}'s scoreboard to "<#E60000>☠️ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
+	set line 4 of {_p}'s scoreboard to "<#00C6E6>⏰ Playtime: <#FFDD00>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
+	set line 5 of {_p}'s scoreboard to "<#FFE700>💸 Money: <#FFDD00>%{money.%{_p}%}%"
+	set line 6 of {_p}'s scoreboard to "<#5865F2>📢 Discord: "
+	set line 7 of {_p}'s scoreboard to ""
 #======= Load Scoreboard on join =======
 
 on join:
