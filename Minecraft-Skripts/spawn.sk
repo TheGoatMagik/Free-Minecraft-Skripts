@@ -52,9 +52,9 @@ command /deletespawn:
 		delete {spawn}
 		send "<#FF0000>Spawn has been deleted!"
 
-on join:
+on first join:
 	teleport player to {spawn}
-	send ""
+	send "<#FFE300>Welcome, <#18FF00>%player%<#FFE300>!
 #==============================================================================================================
 
 
