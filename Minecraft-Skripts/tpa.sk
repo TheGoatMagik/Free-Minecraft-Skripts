@@ -4,7 +4,7 @@
 command /tpa <player>:
 	trigger:
 		if {tpasent.%{_sender}%} is set to true:
-			send actionbar "You have already sent a TPA-Request"
+			send actionbar "<#FF0000>You have already sent a TPA-Request"
 			stop
 		set {_sender} to player
 		set {_receiver} to arg-1
@@ -12,13 +12,13 @@ command /tpa <player>:
 		set {tpalatest.%{_receiver}%} to {_sender}
 		set {tpalatest::}.%{_sender}%} to {_receiver}
 		set {tpasent::%{_sender}%::%{_receiver}%} to true
-		send actionbar "You received a TPA-Request from %{_sender}%!" to {_receiver}
-		send actionbar "TPA-Request sent to %{_receiver}%"
+		send actionbar "<#18FF00>You received a TPA-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
+		send actionbar "<#18FF00>TPA-Request sent to <#FFE300>%{_receiver}%<#18FF00>!"
 		set {tpasent.%{_sender}%} to true
 		wait 1 minute
 		delete {tpasent.%{_sender}%}
 		if {tpaaccepted.%{_sender}%} is set to false:
-			send actionbar "TPA-Request timed out"
+			send actionbar "<#FF0000>TPA-Request timed out"
 			delete {tpaaccepted.%{_sender}%}
 			delete {tpasent::%{_sender}%::%{_receiver}%}
 			delete {tpasent.%{_sender}%}
@@ -55,7 +55,25 @@ command /tpaccept [<player>]:
 				delete {tpasent.%{_sender}%}
 				delete {tpalatest.%{_receiver}%}
 				delete {tpalatest.%{_sender}%}
-				
+		
+		send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}<#18FF00>!"
 #======= You can delete the following lines if you want players to be teleported immediatley =======
+				
+		set {_loc} to location of {_sender}
+		send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!" to {_sender}
+		set {_number} to 5
+		wait 1 second
+		loop 5 times:
+			if {_loc} = location of player:
+				send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_sender}
+				remove 1 from {_number}
+				wait 1 second
+			else:
+				send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_sender}
+				stop
 
+#=================================================================================================
+		
+
+		teleport {_sender} to {_receiver}
 
