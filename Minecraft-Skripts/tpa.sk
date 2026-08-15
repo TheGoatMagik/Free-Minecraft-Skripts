@@ -60,7 +60,7 @@ command /tpaccept [<player>]:
 #======= You can delete the following lines if you want players to be teleported immediatley =======
 				
 		set {_loc} to location of {_sender}
-		send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!" to {_sender}
+		send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_receiver}% <#FFE300>in 5 seconds, don't move!" to {_sender}
 		set {_number} to 5
 		wait 1 second
 		loop 5 times:
