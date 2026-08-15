@@ -16,7 +16,7 @@ command /spawn:
 			wait 1 second
 			loop 5 times:
 				if {_loc} = location of player:
-					send "<#FFE300> %{_number}%"
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
 					remove 1 from {_number}
 					wait 1 second
 				else:
