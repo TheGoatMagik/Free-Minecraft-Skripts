@@ -11,10 +11,9 @@ command /spawn:
 #======= You can remove the following lines if you want players to be teleported instantly =======
 
 			set {_loc} to location of player
-			send ""
-			send "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
-			send ""
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
+			wait 1 second
 			loop 5 times:
 				if {_loc} = location of player:
 					send "<#FFE300> %{_number}%"
