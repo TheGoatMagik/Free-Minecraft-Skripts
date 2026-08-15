@@ -9,6 +9,8 @@ command /tpa <player>:
 		set {_sender} to player
 		set {_receiver} to arg-1
 		set {tpaaccepted.%{_sender}%} to false
+		set {tpalatest.%{_receiver}%} to {_sender}
+		set {tpalatest::}.%{_sender}%} to {_receiver}
 		set {tpasent::%{_sender}%::%{_receiver}%} to true
 		send actionbar "You received a TPA-Request from %{_sender}%!" to {_receiver}
 		send actionbar "TPA-Request sent to %{_receiver}%"
@@ -17,17 +19,43 @@ command /tpa <player>:
 		delete {tpasent.%{_sender}%}
 		if {tpaaccepted.%{_sender}%} is set to false:
 			send actionbar "TPA-Request timed out"
+			delete {tpaaccepted.%{_sender}%}
+			delete {tpasent::%{_sender}%::%{_receiver}%}
+			delete {tpasent.%{_sender}%}
+			delete {tpalatest.%{_receiver}%}
+			delete {tpalatest.%{_sender}%}
 		else if {tpaaccepted.%{_sender}%} is set to true:
 			delete {tpaaccepted.%{_sender}%}
+			delete {tpasent::%{_sender}%::%{_receiver}%}
+			delete {tpasent.%{_sender}%}
+			delete {tpalatest.%{_receiver}%}
+			delete {tpalatest.%{_sender}%}
 			stop
 
-command /tpaccept <player>:
+command /tpaccept [<player>]:
 	aliases: tpaaccept
 	trigger:
-		set {_sender} to arg-1
-		set {_receiver} to player
-		if {tpasent::%{_sender}%::%{_receiver}%} is set to true:
-			set {tpaaccepted.%{_sender}%} to true
-			set {tpasent.%{_sender}%} to false
-			set {tpasent::%{_sender}%::%{_receiver}%} to false
-			
+		if arg-1 is set:
+			set {_sender} to arg-1
+			set {_receiver} to player
+			if {tpasent::%{_sender}%::%{_receiver}%} is set to true:
+				set {tpaaccepted.%{_sender}%} to true
+				delete {tpaaccepted.%{_sender}%}
+				delete {tpasent::%{_sender}%::%{_receiver}%}
+				delete {tpasent.%{_sender}%}
+				delete {tpalatest.%{_receiver}%}
+				delete {_tpalatest.%{_sender}%}
+		else:
+			set {_receiver} to player
+			set {_sender} to {tpalatest.%{_receiver}%}
+			if {tpasent::%{_sender}%::%{_receiver}%} is set to true:
+				set {tpaaccepted.%{_sender}%} to true
+				delete {tpaaccepted.%{_sender}%}
+				delete {tpasent::%{_sender}%::%{_receiver}%}
+				delete {tpasent.%{_sender}%}
+				delete {tpalatest.%{_receiver}%}
+				delete {tpalatest.%{_sender}%}
+				
+#======= You can delete the following lines if you want players to be teleported immediatley =======
+
+
