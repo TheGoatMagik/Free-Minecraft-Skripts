@@ -1,0 +1,64 @@
+#======= An automatic Teaming survey =======
+every 10 minutes:
+    broadcast "<#F6E500>Teamingsurvey started!"
+    set {teamingumfrage} to true
+    loop all players:
+        set {alreadyvotedno.%loop-player%} to false
+        set {alreadyvotedyes.%loop-player%} to false
+        if {teamingyes} is not set:
+            set {teamingyes} to 0
+        if {teamingno} is not set:
+            set {teamingno} to 0
+        send actionbar "<#F6E500>/teaming <#0CE300>yes: %{teamingyes}% <#F6E500>/ <#F60000>no: %{teamingno}%" to loop-player 
+        wait 1 second
+    send actionbar "" to all players
+    set {teamingumfrage} to false
+    if {teamingyes} is more than {teamingno}:
+        set {teamingnow} to true
+        broadcast "<#0CE300>Teaming is allowed!"
+    if {teamingno} is more than {teamingyes}:
+        set {teamingnow} to false
+        broadcast "<#F60000>Teaming is forbidden!"
+    if {teamingno} = {teamingyes}:
+        if {teamingnow} is true:
+            broadcast "<#0CE300>Teaming is allowed!"
+        if {teamingnow} is false:
+            broadcast "<#F60000>Teaming is forbidden!"
+    set {teamingyes} to 0
+    set {teamingno} to 0
+    loop all players:
+        set {alreadyvotedno.%loop-player%} to false
+        set {alreadyvotedyes.%loop-player%} to false
+
+
+command /teaming <text>:
+    trigger:
+        if {teamingumfrage} is true:
+            if arg-1 is "yes":
+                if {alreadyvotedyes.%player%} is true:
+                    send "<#F60000>You have alteady voted for Teaming!"
+                    stop
+                if {alreadyvotedno.%player%} is true:
+                    remove 1 from {teamingno}
+                    add 1 to {teamingyes}
+                    set {alreadyvotedyes.%player%} to true
+                    set {alreadyvotedno.%player%} to false
+                    send "<#0CE300>You have succesfully voted for Teaming!"
+                    stop
+            else if arg-1 is "no":
+                if {alreadyvotedno.%player%} is true:
+                    send "<#F60000>You have already voted against Teaming!"
+                    stop
+                if {alreadyvotedyes.%player%} is true:
+                    remove 1 from {teamingyes}
+                    add 1 to {teamingno}
+                    set {alreadyvotedno.%player%} to true
+                    set {alreadyvotedyes.%player%} to false
+                    send "<#0CE300>You have succesfully voted against Teaming!"
+                    stop
+            else if arg-1 is not set:
+                send "<#F60000>Use [/teaming yes/no]!"
+            if arg-1 is not "yes" or "no":
+                send "<#F60000>Use [/teaming yes/no]!"
+        else:
+            send "<#F60000>No Teaming survey running!"
