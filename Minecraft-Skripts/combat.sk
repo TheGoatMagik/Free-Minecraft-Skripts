@@ -5,22 +5,23 @@ options:
 #======= General Combat system =======
 on damage:
 	if victim is a player:
-		set {_v} to victim
-		set {_a} to attacker
-		if {combat.%victim%} = 0:
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to victim
-			add victim to {combat::*}
-		if {combat.%attacker%} = 0:
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to attacker
-			add attacker to {combat::*}
-		if {combat.%victim%} is not set:
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to victim
-			add victim to {combat::*}
-		if {combat.%attacker%} is not set:
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to attacker
-			add attacker to {combat::*}
-		set {combat.%victim%} to {@combattime}
-		set {combat.%attacker%} to {@combattime}
+		if attacker is a player:
+			set {_v} to victim
+			set {_a} to attacker
+			if {combat.%victim%} = 0:
+				send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to victim
+				add victim to {combat::*}
+			if {combat.%attacker%} = 0:
+				send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to attacker
+				add attacker to {combat::*}
+			if {combat.%victim%} is not set:
+				send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to victim
+				add victim to {combat::*}
+			if {combat.%attacker%} is not set:
+				send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to attacker
+				add attacker to {combat::*}
+			set {combat.%victim%} to {@combattime}
+			set {combat.%attacker%} to {@combattime}
 
 #======= Combat duration decrease =======
 every 1 second:
