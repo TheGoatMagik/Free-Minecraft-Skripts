@@ -64,7 +64,7 @@ command /tpaccept [<player>]:
 		set {_number} to 5
 		wait 1 second
 		loop 5 times:
-			if {_loc} = location of player:
+			if {_loc} = location of {_sender}:
 				send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_sender}
 				remove 1 from {_number}
 				wait 1 second
