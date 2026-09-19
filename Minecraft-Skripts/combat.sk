@@ -25,10 +25,6 @@ every 1 second:
 
 #======= Killing users that quit during combat =======
 on quit:
-	if {combat.%player%} = 0:
-		stop
-	if {combat.%player%} is not set:
-		stop
 	if {combat.%player%} > 0:
 		kill player
 		set {combatkilled.%player%} to true
