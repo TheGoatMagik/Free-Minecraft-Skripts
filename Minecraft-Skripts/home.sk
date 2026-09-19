@@ -45,9 +45,11 @@ command /homes:
 			set slot {_slot} of {_homes} to gray stained glass pane named ""
 			set {_slot} to {_slot} + 1
 		open {_homes} to player
-		on click:
-			cancel event
-		on left click on red bed:
+
+on inventory click:
+	if name of event-inventory  is "<#FF0000>Homes":
+		cancel event
+		if event-item is red bed:
 			set {_slot} to 10
 			loop 7 times:
 				if clicked slot = {_slot}:
