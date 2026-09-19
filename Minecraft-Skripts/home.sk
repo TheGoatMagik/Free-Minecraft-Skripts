@@ -65,12 +65,12 @@ command /sethome [<number>]:
 			set {_home} to arg-1
 			if {_home} < 1:
 				send "<#FFE300>Use the numbers 1-7!"
-				set {home.%player%.%{_home}%} to location of player
 				stop
 			else if {_home} > 7:
 				send "<#FFE300>Use the numbers 1-7!"
 				stop
-			send actionbar "<#18FF00>Home {_home} set to your current location!"
+			set {home.%player%.%{_home}%} to location of player
+			send actionbar "<#18FF00>Home %{_home}% set to your current location!"
 		else:
 			set {_home} to 1
 			loop 7 times:
