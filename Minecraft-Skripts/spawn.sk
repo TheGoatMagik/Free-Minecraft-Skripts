@@ -53,7 +53,7 @@ command /deletespawn:
 
 on first join:
 	teleport player to {spawn}
-	send "<#FFE300>Welcome, <#18FF00>%player%<#FFE300>!
+	send "<#FFE300>Welcome, <#18FF00>%player%<#FFE300>!"
 #==============================================================================================================
 
 
