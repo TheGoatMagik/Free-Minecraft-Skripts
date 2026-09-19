@@ -76,7 +76,7 @@ command /sethome [<number>]:
 			loop 7 times:
 				if {home.%player%.%{_home}%} is not set:
 					set {home.%player%.%{_home}%} to location of player
-					send "<#18FF00>Home {_home} set to your current location!"
+					send "<#18FF00>Home %{_home}% set to your current location!"
 					stop loop
 	
 				
