@@ -3,30 +3,30 @@
 #======= Untested! =======
 command /tpa <player>:
 	trigger:
-		if {tpasent.%{_sender}%} is set to true:
+		if {tpasent.%{_sender}%} is true:
 			send actionbar "<#FF0000>You have already sent a TPA-Request"
 			stop
 		set {_sender} to player
 		set {_receiver} to arg-1
 		set {tpaaccepted.%{_sender}%} to false
 		set {tpalatest.%{_receiver}%} to {_sender}
-		set {tpalatest::}.%{_sender}%} to {_receiver}
-		set {tpasent::%{_sender}%::%{_receiver}%} to true
+		set {tpalatest.%{_sender}%} to {_receiver}
+		set {tpasent.%{_sender}%.%{_receiver}%} to true
 		send actionbar "<#18FF00>You received a TPA-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
 		send actionbar "<#18FF00>TPA-Request sent to <#FFE300>%{_receiver}%<#18FF00>!"
 		set {tpasent.%{_sender}%} to true
 		wait 1 minute
 		delete {tpasent.%{_sender}%}
-		if {tpaaccepted.%{_sender}%} is set to false:
+		if {tpaaccepted.%{_sender}%} is false:
 			send actionbar "<#FF0000>TPA-Request timed out"
 			delete {tpaaccepted.%{_sender}%}
-			delete {tpasent::%{_sender}%::%{_receiver}%}
+			delete {tpasent.%{_sender}%.%{_receiver}%}
 			delete {tpasent.%{_sender}%}
 			delete {tpalatest.%{_receiver}%}
 			delete {tpalatest.%{_sender}%}
-		else if {tpaaccepted.%{_sender}%} is set to true:
+		else if {tpaaccepted.%{_sender}%} is true:
 			delete {tpaaccepted.%{_sender}%}
-			delete {tpasent::%{_sender}%::%{_receiver}%}
+			delete {tpasent.%{_sender}%.%{_receiver}%}
 			delete {tpasent.%{_sender}%}
 			delete {tpalatest.%{_receiver}%}
 			delete {tpalatest.%{_sender}%}
@@ -38,25 +38,25 @@ command /tpaccept [<player>]:
 		if arg-1 is set:
 			set {_sender} to arg-1
 			set {_receiver} to player
-			if {tpasent::%{_sender}%::%{_receiver}%} is set to true:
+			if {tpasent.%{_sender}%.%{_receiver}%} is true:
 				set {tpaaccepted.%{_sender}%} to true
 				delete {tpaaccepted.%{_sender}%}
-				delete {tpasent::%{_sender}%::%{_receiver}%}
+				delete {tpasent.%{_sender}%::%{_receiver}%}
 				delete {tpasent.%{_sender}%}
 				delete {tpalatest.%{_receiver}%}
 				delete {_tpalatest.%{_sender}%}
 		else:
 			set {_receiver} to player
 			set {_sender} to {tpalatest.%{_receiver}%}
-			if {tpasent::%{_sender}%::%{_receiver}%} is set to true:
+			if {tpasent.%{_sender}%.%{_receiver}%} is true:
 				set {tpaaccepted.%{_sender}%} to true
 				delete {tpaaccepted.%{_sender}%}
-				delete {tpasent::%{_sender}%::%{_receiver}%}
+				delete {tpasent.%{_sender}%.%{_receiver}%}
 				delete {tpasent.%{_sender}%}
 				delete {tpalatest.%{_receiver}%}
 				delete {tpalatest.%{_sender}%}
 		
-		send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}<#18FF00>!"
+		send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}%<#18FF00>!"
 #======= You can delete the following lines if you want players to be teleported immediatley =======
 				
 		set {_loc} to location of {_sender}
