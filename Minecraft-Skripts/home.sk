@@ -56,7 +56,7 @@ on inventory click:
 					set {_clicked} to {_slot} - 9
 					stop loop
 			teleport player to {home.%player%.%{_clicked}%}
-			close {_homes}
+			close players current inventory
 			send actionbar "<#18FF00>Teleported to Home %{_clicked}%!"
 
 command /sethome [<number>]:
