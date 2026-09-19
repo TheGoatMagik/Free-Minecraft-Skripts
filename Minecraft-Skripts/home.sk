@@ -36,12 +36,15 @@ command /homes:
 			if {home.%player%.%{_homenumber}%} is set:
 				set slot {_slot} of {_homes} to red bed named "<#FFE300>Home %{_homenumber}%"
 				set {_slot} to {_slot} + 1
+				set {_homenumber} to {_homenumber} + 1
 			else:
 				set slot {_slot} of {_homes} to gray bed named "<#FFE300>Home %{_homenumber}%" with lore "<#B7B7B7>Not set, use /sethome <number>"
-				set {_slot} to {_slot} +1
+				set {_slot} to {_slot} + 1
+				set {_homenumber} to {_homenumber} + 1
 		loop 10 times:
 			set slot {_slot} of {_homes} to gray stained glass pane named ""
 			set {_slot} to {_slot} + 1
+		open {_homes} to player
 
 command /sethome [<number>]:
 	trigger:
