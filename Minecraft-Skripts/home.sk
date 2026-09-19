@@ -30,17 +30,17 @@ command /homes:
 		set {_slot} to 0
 		set {_homenumber} to 1
 		loop 10 times:
-			set slot {_slot} to gray stained glass pane named ""
+			set slot {_slot} of {_homes} to gray stained glass pane named ""
 			set {_slot} to {_slot} + 1
 		loop 7 times:
 			if {home.%player%.%{_homenumber}%} is set:
-				set slot {_slot} to red bed named "<#FFE300>Home %{_homenumber}%"
+				set slot {_slot} of {_homes} to red bed named "<#FFE300>Home %{_homenumber}%"
 				set {_slot} to {_slot} + 1
 			else:
-				set slot {_slot} to gray bed named "<#FFE300>Home %{_homenumber}%" with lore "<#B7B7B7>Not set, use /sethome <number>"
+				set slot {_slot} of {_homes} to gray bed named "<#FFE300>Home %{_homenumber}%" with lore "<#B7B7B7>Not set, use /sethome <number>"
 				set {_slot} to {_slot} +1
 		loop 10 times:
-			set slot {_slot} to gray stained glass pane named ""
+			set slot {_slot} of {_homes} to gray stained glass pane named ""
 			set {_slot} to {_slot} + 1
 
 command /sethome [<number>]:
@@ -51,7 +51,7 @@ command /sethome [<number>]:
 				send "<#FFE300>Use the numbers 1-7!"
 				set {home.%player%.%{_home}%} to location of player
 				stop
-			else if {_home > 7:
+			else if {_home} > 7:
 				send "<#FFE300>Use the numbers 1-7!"
 				stop
 			send actionbar "<#18FF00>Home {_home} set to your current location!"
