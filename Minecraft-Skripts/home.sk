@@ -55,8 +55,24 @@ on inventory click:
 				if clicked slot = {_slot}:
 					set {_clicked} to {_slot} - 9
 					stop loop
-			teleport player to {home.%player%.%{_clicked}%}
-			close players current inventory
+			close player's inventory
+			set {_loc} to location of player
+			send actionbar "<#18FF00>You will be teleported to Home %{_clicked}% in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_loc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+
+			teleport player to {home.%player%.%{_home}%}
+			send ""
+			send "<#18FF00>You've been teleported to Home %{_home}%!"
+			send ""
 			send actionbar "<#18FF00>Teleported to Home %{_clicked}%!"
 
 command /sethome [<number>]:
