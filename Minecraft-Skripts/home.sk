@@ -53,7 +53,7 @@ on inventory click:
 			set {_slot} to 10
 			loop 7 times:
 				if clicked slot = {_slot}:
-					set {_clicked} to {_slot} - 10
+					set {_clicked} to {_slot} - 9
 					stop loop
 			teleport player to {home.%player%.%{_clicked}%}
 			close {_homes}
