@@ -45,6 +45,17 @@ command /homes:
 			set slot {_slot} of {_homes} to gray stained glass pane named ""
 			set {_slot} to {_slot} + 1
 		open {_homes} to player
+		on click:
+			cancel event
+		on left click on red bed:
+			set {_slot} to 10
+			loop 7 times:
+				if clicked slot = {_slot}:
+					set {_clicked} to {_slot} - 10
+					stop loop
+			teleport player to {home.%player%.%{_clicked}%}
+			close {_homes}
+			send actionbar "<#18FF00>Teleported to Home %{_clicked}%!"
 
 command /sethome [<number>]:
 	trigger:
