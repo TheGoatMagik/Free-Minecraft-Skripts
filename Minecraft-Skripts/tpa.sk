@@ -1,6 +1,4 @@
 #======= Skript for the /tpa command =======
-#======= Unfinished! =======
-#======= Untested! =======
 command /tpa <player>:
 	trigger:
 		if {tpasent.%{_sender}%} is true:
