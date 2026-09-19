@@ -1,0 +1,66 @@
+command /home <integer>:
+	trigger:
+		set {_home} to arg-1
+		if {home.%player%.%{_home}%} is set:
+
+			set {_loc} to location of player
+			send actionbar "<#18FF00>You will be teleported to Home %{_home}% in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_loc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+
+			teleport player to {home.%player%.%{_home}%}
+			send ""
+			send "<#18FF00>You've been teleported to Home %{_home}%!"
+			send ""
+
+		else:
+			send "<#FF0000>You havent set that Home yet, please use <#FFE300>/sethome<#FF0000> <number>!"
+
+command /homes:
+	trigger:
+		set {_homes} to new chest inventory with 3 rows named "<#FF0000>Homes"
+		set {_slot} to 0
+		set {_homenumber} to 1
+		loop 10 times:
+			set slot {_slot} to gray stained glass pane named ""
+			set {_slot} to {_slot} + 1
+		loop 7 times:
+			if {home.%player%.%{_homenumber}%} is set:
+				set slot {_slot} to red bed named "<#FFE300>Home %{_homenumber}%"
+				set {_slot} to {_slot} + 1
+			else:
+				set slot {_slot} to gray bed named "<#FFE300>Home %{_homenumber}%" with lore "<#B7B7B7>Not set, use /sethome <number>"
+				set {_slot} to {_slot} +1
+		loop 10 times:
+			set slot {_slot} to gray stained glass pane named ""
+			set {_slot} to {_slot} + 1
+
+command /sethome [<number>]:
+	trigger:
+		if arg-1 is set:
+			set {_home} to arg-1
+			if {_home} < 1:
+				send "<#FFE300>Use the numbers 1-7!"
+				set {home.%player%.%{_home}%} to location of player
+				stop
+			else if {_home > 7:
+				send "<#FFE300>Use the numbers 1-7!"
+				stop
+			send actionbar "<#18FF00>Home {_home} set to your current location!"
+		else:
+			set {_home} to 1
+			loop 7 times:
+				if {home.%player%.%{_home}%} is not set:
+					set {home.%player%.%{_home}%} to location of player
+					send "<#18FF00>Home {_home} set to your current location!"
+					stop loop
+	
+				
