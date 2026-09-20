@@ -1,23 +1,27 @@
 #======= Unfinished an Untested =======
 options:
 	radius: 15000
-	cooldown: 10
+	cooldown: 2
+	overworldname: world
+	nethername: nether
+	endname: end
 
-command /rtp [<text>]:
+command /rtpoverworld:
 	trigger:
-		if arg-1 is set:
-			set {_attempts} to 0
-			set {_found} to false
-			if {rtpcooldown.%player%} is true:
-				stop
-			while {_found} is false:
-				set {_attempts} to {_attempts} + 1
-				if {_attempts} is 100:
+		set {_attempts} to 0
+		set {_found} to false
+		if {rtpcooldown.%player%} is true:
+			send actionbar "<#FFFF00>You are still on cooldown!"
+			stop
+		while {_found} is false:
+			set {_attempts} to {_attempts} + 1
+			if {_attempts} is 100:
 					send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
 					stop
+				send actionbar "<#18FF00>Looking for random location..."
 				set {_x} to random integer between -{@radius} and {@radius}
 				set {_z} to random integer between -{@radius} and {@radius}
-				set {_loc} to location of highest solid block at location {_x}, 0, {_z}
+				set {_loc} to location of highest solid block at location {_x}, 0, {_z} in world {@overworldname}
 				set {_loc2} to {_loc}
 				add 1 to y-coordinate of {_loc2}
 				set {_loc3} to {_loc}
@@ -30,7 +34,7 @@ command /rtp [<text>]:
 									if block at location {_loc3} is air:
 										set {_found} to true
 			teleport player to {_loc2}
-			send actionbar "<#18FF00>Succesfully teleported!"
+			send actionbar "<#18FF00>Save location found!"
 			set {rtpcooldown.%player%} to true
 			wait {@cooldown} minutes
 			set {rtpcooldown.%player%} to false
