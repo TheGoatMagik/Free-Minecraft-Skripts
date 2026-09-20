@@ -11,12 +11,12 @@ command /rtpoverworld:
 		set {_attempts} to 0
 		set {_found} to false
 		if {rtpcooldown.%player%} is true:
-			send actionbar "<#FFFF00>You are still on cooldown!"
+			send actionbar "<#FF0000>You are still on cooldown!"
 			stop
 		while {_found} is false:
 			set {_attempts} to {_attempts} + 1
 			if {_attempts} is 100:
-				send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
+				send actionbar "<#FF0000>Couldnt find a save location, please try again later!"
 				stop
 			send actionbar "<#18FF00>Looking for random location..."
 			set {_x} to random integer between -{@radius} and {@radius}
@@ -59,12 +59,12 @@ command /rtpnether:
 		set {_attempts} to 0
 		set {_found} to false
 		if {rtpcooldown.%player%} is true:
-			send actionbar "<#FFFF00>You are still on cooldown!"
+			send actionbar "<#FF0000>You are still on cooldown!"
 			stop
 		while {_found} is false:
 			set {_attempts} to {_attempts} + 1
 			if {_attempts} is 100:
-				send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
+				send actionbar "<#FF0000>Couldnt find a save location, please try again later!"
 				stop
 			send actionbar "<#18FF00>Looking for random location..."
 			set {_x} to random integer between -{@radius} and {@radius}
@@ -112,12 +112,12 @@ command /rtpend:
 		set {_attempts} to 0
 		set {_found} to false
 		if {rtpcooldown.%player%} is true:
-			send actionbar "<#FFFF00>You are still on cooldown!"
+			send actionbar "<#FF0000>You are still on cooldown!"
 			stop
 		while {_found} is false:
 			set {_attempts} to {_attempts} + 1
 			if {_attempts} is 100:
-				send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
+				send actionbar "<#FF0000>Couldnt find a save location, please try again later!"
 				stop
 			send actionbar "<#18FF00>Looking for random location..."
 			set {_x} to random integer between -{@radius} and {@radius}
