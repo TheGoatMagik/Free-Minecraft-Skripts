@@ -94,5 +94,7 @@ command /sethome [<number>]:
 					set {home.%player%.%{_home}%} to location of player
 					send "<#18FF00>Home %{_home}% set to your current location!"
 					stop loop
+				else:
+					set {_home} to {_home} + 1
 	
 				
