@@ -1,0 +1,5 @@
+#======= This script can be very dangerous if the permission for using this command gets in the wrong hands! =======
+command /sudo <player> <text>:
+	permission: sudo.use
+	trigger:
+		make arg-1 execute arg-2
