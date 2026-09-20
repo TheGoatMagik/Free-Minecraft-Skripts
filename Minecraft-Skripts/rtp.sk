@@ -49,7 +49,7 @@ command /rtpoverworld:
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
-			teleport player to {spawn}
+			teleport player to {_loc2}
 			send ""
 			send "<#18FF00>You've been teleported!"
 			send ""
@@ -69,18 +69,23 @@ command /rtpnether:
 				send actionbar "<#18FF00>Looking for random location..."
 				set {_x} to random integer between -{@radius} and {@radius}
 				set {_z} to random integer between -{@radius} and {@radius}
-				set {_loc} to location of highest solid block at location {_x}, 0, {_z} in world {@nethername}
-				set {_loc2} to {_loc}
-				add 1 to y-coordinate of {_loc2}
-				set {_loc3} to {_loc}
-				add 1 to y-coordinate of {_loc3}
-				if block at {_loc} is not water:
-					if block at {_loc} is not lava:
-						if block at {_loc} is not cactus:
-							if block at {_loc} is not magma block:
-								if block at location {_loc2} is air:
-									if block at location {_loc3} is air:
-										set {_found} to true
+				set {_y} to 120
+				while {_y} > 5:
+					set {_loc} to location at {_x}, {_y}, {_z} in world {@nethername}
+					set {_loc2} to {_loc}
+					add 1 to y-coordinate of {_loc2}
+					set {_loc3} to {_loc}
+					add 2 to y-coordinate of {_loc3}
+					if block at {_loc} is solid:
+						if block at {_loc} is not water:
+							if block at {_loc} is not lava:
+								if block at {_loc} is not cactus:
+									if block at {_loc} is not magma block:
+										if block at {_loc2} is air:
+											if block at {_loc3} is air:
+												set {_found} to true
+												delete {_y}
+					remove 1 from {_y}
 			send actionbar "<#18FF00>Save location found!"
 			set {rtpcooldown.%player%} to true
 			wait {@cooldown} minutes
@@ -97,7 +102,7 @@ command /rtpnether:
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
-			teleport player to {spawn}
+			teleport player to {_loc2}
 			send ""
 			send "<#18FF00>You've been teleported!"
 			send ""
@@ -145,7 +150,7 @@ command /rtpend:
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
-			teleport player to {spawn}
+			teleport player to {_loc2}
 			send ""
 			send "<#18FF00>You've been teleported!"
 			send ""
