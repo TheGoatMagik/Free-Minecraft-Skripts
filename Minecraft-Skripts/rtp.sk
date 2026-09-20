@@ -1,4 +1,4 @@
-#======= Unfinished an Untested =======
+#======= RTP script that works for the overworld/nether/end, just replace the world names before using =======
 options:
 	radius: 15000
 	cooldown: 2
@@ -33,8 +33,119 @@ command /rtpoverworld:
 								if block at location {_loc2} is air:
 									if block at location {_loc3} is air:
 										set {_found} to true
-			teleport player to {_loc2}
 			send actionbar "<#18FF00>Save location found!"
 			set {rtpcooldown.%player%} to true
 			wait {@cooldown} minutes
 			set {rtpcooldown.%player%} to false
+			set {_ploc} to location of player
+			send actionbar "<#18FF00>You will be teleported in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_ploc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+			teleport player to {spawn}
+			send ""
+			send "<#18FF00>You've been teleported!"
+			send ""
+
+command /rtpnether:
+	trigger:
+		set {_attempts} to 0
+		set {_found} to false
+		if {rtpcooldown.%player%} is true:
+			send actionbar "<#FFFF00>You are still on cooldown!"
+			stop
+		while {_found} is false:
+			set {_attempts} to {_attempts} + 1
+			if {_attempts} is 100:
+					send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
+					stop
+				send actionbar "<#18FF00>Looking for random location..."
+				set {_x} to random integer between -{@radius} and {@radius}
+				set {_z} to random integer between -{@radius} and {@radius}
+				set {_loc} to location of highest solid block at location {_x}, 0, {_z} in world {@nethername}
+				set {_loc2} to {_loc}
+				add 1 to y-coordinate of {_loc2}
+				set {_loc3} to {_loc}
+				add 1 to y-coordinate of {_loc3}
+				if block at {_loc} is not water:
+					if block at {_loc} is not lava:
+						if block at {_loc} is not cactus:
+							if block at {_loc} is not magma block:
+								if block at location {_loc2} is air:
+									if block at location {_loc3} is air:
+										set {_found} to true
+			send actionbar "<#18FF00>Save location found!"
+			set {rtpcooldown.%player%} to true
+			wait {@cooldown} minutes
+			set {rtpcooldown.%player%} to false
+			set {_ploc} to location of player
+			send actionbar "<#18FF00>You will be teleported in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_ploc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+			teleport player to {spawn}
+			send ""
+			send "<#18FF00>You've been teleported!"
+			send ""
+
+command /rtpend:
+	trigger:
+		set {_attempts} to 0
+		set {_found} to false
+		if {rtpcooldown.%player%} is true:
+			send actionbar "<#FFFF00>You are still on cooldown!"
+			stop
+		while {_found} is false:
+			set {_attempts} to {_attempts} + 1
+			if {_attempts} is 100:
+					send actionbar "<#FFFF00>Couldnt find a save location, please try again later!"
+					stop
+				send actionbar "<#18FF00>Looking for random location..."
+				set {_x} to random integer between -{@radius} and {@radius}
+				set {_z} to random integer between -{@radius} and {@radius}
+				set {_loc} to location of highest solid block at location {_x}, 0, {_z} in world {@endname}
+				set {_loc2} to {_loc}
+				add 1 to y-coordinate of {_loc2}
+				set {_loc3} to {_loc}
+				add 1 to y-coordinate of {_loc3}
+				if block at {_loc} is not water:
+					if block at {_loc} is not lava:
+						if block at {_loc} is not cactus:
+							if block at {_loc} is not magma block:
+								if block at location {_loc2} is air:
+									if block at location {_loc3} is air:
+										set {_found} to true
+			send actionbar "<#18FF00>Save location found!"
+			set {rtpcooldown.%player%} to true
+			wait {@cooldown} minutes
+			set {rtpcooldown.%player%} to false
+			set {_ploc} to location of player
+			send actionbar "<#18FF00>You will be teleported in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_ploc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+			teleport player to {spawn}
+			send ""
+			send "<#18FF00>You've been teleported!"
+			send ""
