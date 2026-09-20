@@ -1,19 +1,16 @@
 #======= This skript lets you have an enderchest with double the slots! =======
-#======= Not tested! =======
-on right click of enderchest:
-	if nmae of current inventory of player contains "Enderchest":
-		close player's current inventory
-		open a new chest inventory with 6 rows named "Enderchest"
-		loop 54 times:
-			if {enderchestslot::%player%::%loop-number - 1%} is set:
-				set slot loop-number - 1 to {enderchestslot::%player%::%loop-number - 1%}
-				stop
-			else:
-				stop
+on right click on ender chest:
+	cancel event
+	set {_ec} to a new chest inventory with 6 rows named "Enderchest"
+	open {_ec} to player
+	loop 54 times:
+		if {enderchestslot::%player%::%loop-number - 1%} is set:
+			set slot loop-number - 1 of {_ec} to {enderchestslot::%player%::%loop-number - 1%}
+		else:
+			stop
 
 
 on inventory close:
 	if name of player's current inventory contains "Enderchest":
 		loop 54 times:
-			set {enderchestslot::%player%::%loop-number - 1%} to slot loop-number - 1
-			stop
+			set {enderchestslot::%player%::%loop-number - 1%} to slot loop-number - 1 of player's current inventory
