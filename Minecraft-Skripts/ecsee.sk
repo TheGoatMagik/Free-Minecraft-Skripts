@@ -1,0 +1,5 @@
+#======= Very simple script to see someones enderchest =======
+command /ecsee <player>:
+	permission: ecsee.use
+	trigger:
+		open ender chest of arg-1 to player
