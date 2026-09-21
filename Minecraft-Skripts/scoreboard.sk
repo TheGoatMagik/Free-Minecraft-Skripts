@@ -1,4 +1,4 @@
-#======= Change the Scoreboards lines with whatever you want! And change the Discord link! =======
+#======= Change the Scoreboards lines with whatever you want! =======
 options:
 	discord: discord.gg/xyz
 
@@ -17,10 +17,10 @@ function reloadScoreboard(p: player):
 		set {money.%{_p}%} to 0
 	set title of {_p}'s fastboard to "My Scoreboard"
 	set line 1 of {_p}'s fastboard to ""
-	set line 2 of {_p}'s fastboard to formatted "<#38FF12>⚔️ Kills: <#FFDD00>%{kills.%{_p}%}%"
-	set line 3 of {_p}'s fastboard to formatted "<#E60000>☠️ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
+	set line 2 of {_p}'s fastboard to formatted "<#38FF12>⚔ Kills: <#FFDD00>%{kills.%{_p}%}%"
+	set line 3 of {_p}'s fastboard to formatted "<#E60000>☠ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
 	set line 4 of {_p}'s fastboard to formatted "<#00C6E6>⏰ Playtime: <#FFDD00>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
-	set line 5 of {_p}'s fastboard to formatted "<#FFE700>💸 Money: <#FFDD00>%{money.%{_p}%}%"
+	set line 5 of {_p}'s fastboard to formatted "<#FFE700>💰 Money: <#FFDD00>%{money.%{_p}%}%"
 	set line 6 of {_p}'s fastboard to formatted "<#5865F2>📢 Discord: {@discord}"
 	set line 7 of {_p}'s fastboard to ""
 #======= Load Scoreboard on join =======
@@ -69,7 +69,6 @@ command /pay <player> <integer>:
 			send "<#18FF00>You received <#FFE300>%arg-2% Money <#18FF00>from <#FFE300>%player%!" to arg-1
 		reloadScoreboard(player)
 		reloadScoreboard(arg-1)
-
 
 
 
