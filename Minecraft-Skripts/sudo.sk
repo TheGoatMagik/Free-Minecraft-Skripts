@@ -2,4 +2,4 @@
 command /sudo <player> <text>:
 	permission: sudo.use
 	trigger:
-		make arg-1 execute arg-2
+		make arg-1 execute command arg-2
