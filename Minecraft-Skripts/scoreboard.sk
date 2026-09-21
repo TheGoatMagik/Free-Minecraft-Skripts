@@ -1,45 +1,62 @@
-#======= Unfinished!!!! =======
-#======= Change the Scoreboards lines with whatever you want! =======
+#======= Change the Scoreboards lines with whatever you want! And change the Discord link! =======
+options:
+	discord: discord.gg/xyz
 
 function reloadScoreboard(p: player):
-	set title of {_p}'s scoreboard to "My Scoreboard"
-	set line 1 of {_p}'s scoreboard to ""
-	set line 2 of {_p}'s scoreboard to "<#38FF12>⚔️ Kills: <#FFDD00>%{kills.%{_p}%}%"
-	set line 3 of {_p}'s scoreboard to "<#E60000>☠️ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
-	set line 4 of {_p}'s scoreboard to "<#00C6E6>⏰ Playtime: <#FFDD00>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
-	set line 5 of {_p}'s scoreboard to "<#FFE700>💸 Money: <#FFDD00>%{money.%{_p}%}%"
-	set line 6 of {_p}'s scoreboard to "<#5865F2>📢 Discord: "
-	set line 7 of {_p}'s scoreboard to ""
+	if {kills.%{_p}%} is not set:
+		set {kills.%{_p}%} to 0
+	if {deaths.%{_p}%} is not set:
+		set {deaths.%{_p}%} to 0
+	if {playtimedays.%{_p}%} is not set:
+		set {playtimedays.%{_p}%} to 0
+	if {playtimehours.%{_p}%} is not set:
+		set {playtimehours.%{_p}%} to 0
+	if {playtimeminutes.%{_p}%} is not set:
+		set {playtimeminutes.%{_p}%} to 0
+	if {money.%{_p}%} is not set:
+		set {money.%{_p}%} to 0
+	set title of {_p}'s fastboard to "My Scoreboard"
+	set line 1 of {_p}'s fastboard to ""
+	set line 2 of {_p}'s fastboard to formatted "<#38FF12>⚔️ Kills: <#FFDD00>%{kills.%{_p}%}%"
+	set line 3 of {_p}'s fastboard to formatted "<#E60000>☠️ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
+	set line 4 of {_p}'s fastboard to formatted "<#00C6E6>⏰ Playtime: <#FFDD00>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
+	set line 5 of {_p}'s fastboard to formatted "<#FFE700>💸 Money: <#FFDD00>%{money.%{_p}%}%"
+	set line 6 of {_p}'s fastboard to formatted "<#5865F2>📢 Discord: {@discord}"
+	set line 7 of {_p}'s fastboard to ""
 #======= Load Scoreboard on join =======
 
 on join:
-	function reloadScoreboard(player)
+	reloadScoreboard(player)
 
 #======= Playtimecounter =======
 
-every one minute:
+every 1 minute:
 	loop all players:
 		add 1 to {playtime.%loop-player%}
 		if {playtime.%loop-player%} = 60:
 			set {playtime.%loop-player%} to 0
-			add 1 {playtimehours.%loop-player%}
+			add 1 to {playtimehours.%loop-player%}
 			if {playtimehours.%loop-player%} = 24:
 				set {playtimehours.%loop-player%} to 0
 				add 1 to {playtimedays.%loop-player%}
-		function reloadScoreboard(%loop-player%)
+		set {_p} to loop-player
+		reloadScoreboard({_p})
 
 #======= Kill and Death counter =======
 
 on death:
 	if victim is a player:
 		add 1 to {deaths.%victim%}
+		reloadScoreboard(victim)
 		if attacker is a player:
 			add 1 to {kills.%attacker%}
+			reloadScoreboard(attacker)
 
 #======= Money System =======
 
 on first join:
 	set {money.%player%} to 1000 #Change the Money to whatever a player should receive on his first join
+	reloadScoreboard(player)
 
 command /pay <player> <integer>:
 	trigger:
@@ -50,6 +67,8 @@ command /pay <player> <integer>:
 			subtract arg-2 from {money.%player%}
 			send "<#18FF00>You have succesfully paid <#FFE300>%arg-1% %arg-2% Money<#18FF00>!"
 			send "<#18FF00>You received <#FFE300>%arg-2% Money <#18FF00>from <#FFE300>%player%!" to arg-1
+		reloadScoreboard(player)
+		reloadScoreboard(arg-1)
 
 
 
