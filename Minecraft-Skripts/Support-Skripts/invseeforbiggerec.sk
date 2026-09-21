@@ -1,0 +1,16 @@
+command /ecsee <player>:
+	permission: ecsee.use
+	trigger:
+		set {_p} to arg-1
+		set {_ec} to a new chest inventory with 6 rows named "Enderchest"
+		open {_ec} to player
+		loop 54 times:
+			if {enderchestslot::%{_p}%::%loop-number - 1%} is set:
+				set slot loop-number - 1 of {_ec} to {enderchestslot::%{_p}%::%loop-number - 1%}
+			else:
+				stop
+
+on inventory close:
+	if name of player's current inventory contains "Enderchest":
+		loop 54 times:
+			set {enderchestslot::%{_p}%::%loop-number - 1%} to slot loop-number - 1 of player's current inventory
