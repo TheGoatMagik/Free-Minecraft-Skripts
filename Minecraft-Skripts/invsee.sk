@@ -1,7 +1,45 @@
-#========= Unfinished!
-command /invsee <player>:
-    permission: invsee.use
-    trigger:
-        set {player} to arg-1
-        set {inv.%{player}%} to a new chest inventorywith 6 rows named "<#F3CF00>%player%<#FFFFFF>'s inventory"
-        loop 
+command /invsee <offlineplayer>:
+	permission: invsee.use
+	trigger:
+		if arg-1 is player:
+			send "<#FF0000>You cant view your own inventory!" to player
+			stop
+		set {_inv} to new chest inventory with 5 rows named "<#5865F2>%arg-1's name%"
+		open {_inv} to player
+		set {invsee::%player%} to arg-1
+		invsee_reload(player, arg-1, 3)
+
+on inventory click:
+	loop {invsee::*}:
+		if loop-value is player:
+			set {_index} to loop-index
+			set {_index} to {_index} parsed as offline player
+			invsee_reload({_index}, loop-value, 2)
+		else if loop-index is player:
+			set {_index} to loop-index
+			set {_index} to {_index} parsed as offline player
+			invsee_reload({_index}, loop-value, 1)
+
+function invsee_reload(viewer: player, p: player, int: integer):
+	wait 1 tick
+	set {_name} to {_viewer}'s current inventory's name
+	if {_name} is "<#5865F2>%{_p}'s name%":
+		set {_slot} to 0
+		loop 41 times:
+			if {_slot} > 35:
+				set {_vslot} to {_slot}+2
+			else:
+				set {_vslot} to {_slot}
+			if {_int} is 1:
+				set slot {_slot} of {_p} to slot {_vslot} of {_viewer}'s current inventory
+			else if {_int} is 2:
+				set slot {_vslot} of {_viewer}'s current inventory to slot {_slot} of {_p}
+			else if {_int} is 3:
+				set slot {_vslot} of {_viewer}'s current inventory to slot {_slot} of {_p}
+			add 1 to {_slot}
+
+on inventory close:
+	loop {invsee::*}:
+		if loop-index is player:
+			clear {invsee::%player%}
+			remove player from {invsee::*}
