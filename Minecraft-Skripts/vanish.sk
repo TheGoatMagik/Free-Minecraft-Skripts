@@ -1,0 +1,42 @@
+options:
+	quitmessage: &8[&c-&8]
+	joinmessage: &8[&a+&8]
+    
+command /vanish:
+	permission: vanish.use
+	aliases: /v
+	trigger:
+		if {vanish.%player%} is not true:
+			broadcast "{@quitmessage} %player%"
+			hide the player from all players
+			send "<#18FF00>You are now in vanish."
+			set {vanish.%player%} to true
+			loop all players:
+				if loop-player has permission "see.vanished":
+					send "<#FFE700>%player% <#18FF00>is now in vanish." to loop-player
+		else:
+			reveal the player from all players
+			broadcast "{@joinmessage} %player%"
+			send "<#FF0000>You are no longer vanish."
+			set {vanish.%player%} to false
+			loop all players:
+				if loop-player has permission "see.vanished":
+					send "<#FFE700>%player% <#18FF00>is no longer in vanish." to loop-player
+
+command /vanishinfo <player>:
+	permission: see.vanish
+	trigger:
+		if {vanish.%player%} is true:
+			send "<#FFE700>%player% <#18FF00>is in vanish."
+		else:
+			send "<#FFE700>%player% <#FF0000>is not in vanish."
+
+
+on quit:
+	if {vanish.%player%} is true:
+		set {vanish.%player%} to false
+
+on join:
+	loop all players:
+		if {vanish.%loop-player%} is true:
+			hide the loop-player from all players
