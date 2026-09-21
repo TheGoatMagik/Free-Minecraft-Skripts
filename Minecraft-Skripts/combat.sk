@@ -1,28 +1,35 @@
 #======= This script will work even though it will throw 2 problems =======
 options:
-	combattime: "30"
+	combattime: 30
 
 #======= General Combat system =======
 on damage:
 	if attacker is a player:
 		if victim is a player:
-			add victim to {combat::*}
-			add attacker to {combat::*}
+			set {_vuuid} to uuid of victim
+			set {_auuid} to uuid of attacker
+			if {combat::*} contains {_vuuid}:
+				remove {_vuuid} from {combat::*}
+			if {combat::*} contains {_auuid}:
+				remove {_auuid} from {combat::*}
+			add {_vuuid} to {combat::*}
+			add {_auuid} to {combat::*}
 			set {combat.%victim%} to {@combattime}
 			set {combat.%attacker%} to {@combattime}
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to victim
-			send "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for %{@combattime}% seconds!" to attacker
+			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for {@combattime} seconds!" to victim
+			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for {@combattime} seconds!" to attacker
 
 #======= Combat duration decrease =======
 every 1 second:
 	loop {combat::*}:
-		set {_p} to loop-index parsed as player
-		remove 1 from {combat.%{_p}%}
-		if {combat.%{_p}%} > 0:
+		set {_p} to loop-value parsed as player
+		subtract 1 from {combat.%{_p}%}
+		if {combat.%{_p}%} is more than 0:
 			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>Combat: %{combat.%{_p}%}% seconds" to {_p}
 		if {combat.%{_p}%} = 0:
 			send "&8[<#F3CF00>Combatsystem&8] <#18FF00>Combat ended!" to {_p}
-			remove {_p} from {combat::*}
+			delete {combat.%{_p}%}
+			remove {_p}'s uuid from {combat::*}
 
 #======= Killing users that quit during combat =======
 on quit:
