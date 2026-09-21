@@ -1,4 +1,5 @@
 #======= This skript lets you have an enderchest with double the slots! =======
+#======= Warning: Don't use this together with the ecsee command, as it will show the normal minecraft enderchest which will be empty =======
 on right click on ender chest:
 	cancel event
 	set {_ec} to a new chest inventory with 6 rows named "Enderchest"
