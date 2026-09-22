@@ -18,9 +18,9 @@ command /bounty <player> [<integer>]:
 		else:
 			set {_p} to arg-1
 			if {bounty.%{_p}%} is set:
-				send "%{_p}%'s Bounty is <#18FF00>{bounty.%{_p}%}!" to player
+				send "%{_p}%'s Bounty is <#18FF00>%{bounty.%{_p}%}%!" to player
 			else:
-				send "<#18FF00>%{_p}%Has no Bounty yet!" to player
+				send "<#18FF00>%{_p}% has no Bounty yet!" to player
 
 on death:
 	set {_v} to victim
@@ -29,5 +29,5 @@ on death:
 		set {_bounty} to {bounty.%{_v}%}
 		set {money.%{_a}%} to {money.%{_a}%} + {_bounty}
 		delete {bounty.%{_v}%}
-		send "<#FAEDCB>You received <#18FF00>%{_bounty}% <#FAEDCB>Money by killing <#18FF00>%victim%<#FAEDCB>!"
+		send "<#FAEDCB>You received <#18FF00>%{_bounty}% <#FAEDCB>Money by killing <#18FF00>%victim%<#FAEDCB>!" to attacker
 		
