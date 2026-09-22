@@ -1,0 +1,33 @@
+#======= This script adds a Bounty command =======
+#======= Please make sure to replace the money/balance variable with your own! =======
+command /bounty <player> [<integer>]:
+	trigger:
+		if arg-2 is set:
+			set {_p} to arg-1
+			set {_int} to arg-2
+			if {_int} > {money.%player%}:
+				send "<#FF0000>You don't have this amount of money!" to player
+				stop
+			if {bounty.%{_p}%} is set:
+				set {bounty.%{_p}%} to {bounty.%{_p}%} + {_int}
+				set {money.%player%} to {money.%player%} - {_int}
+			else:
+				set {bounty.%{_p}%} to {_int}
+				set {money.%player%} to {money.%player%} - {_int}
+			send "<#18FF00>Added %{_int}% to %{_p}%'s Bounty!" to player
+		else:
+			set {_p} to arg-1
+			if {bounty.%{_p}%} is set:
+				send "%{_p}%'s Bounty is <#18FF00>{bounty.%{_p}%}!" to player
+			else:
+				send "<#18FF00>%{_p}%Has no Bounty yet!" to player
+
+on death:
+	set {_v} to victim
+	set {_a} to attacker
+	if {bounty.%{_v}%} is set:
+		set {_bounty} to {bounty.%{_v}%}
+		set {money.%{_a}%} to {money.%{_a}%} + {_bounty}
+		delete {bounty.%{_v}%}
+		send "<#FAEDCB>You received <#18FF00>%{_bounty}% <#FAEDCB>Money by killing <#18FF00>%victim%<#FAEDCB>!"
+		
