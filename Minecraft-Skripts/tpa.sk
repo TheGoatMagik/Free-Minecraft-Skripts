@@ -109,7 +109,7 @@ command /tpahere <player>:
 			delete {tpalatest.%{_sender}%}
 			stop
 
-command /tpaccept [<player>]:
+command /tpahereaccept [<player>]:
 	aliases: tpaaccept
 	trigger:
 		if arg-1 is set:
