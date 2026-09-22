@@ -1,0 +1,6 @@
+#======= This script lets you repair your tool =======
+command /repair:
+	permission: repair.use
+	trigger:
+		repair players tool
+		send "<#18FF00>Tool repaired!"
