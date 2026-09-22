@@ -36,7 +36,7 @@ on block break:
 			if x-coordinate of event-block is between x of {spawnedge1} and x of {spawnedge2}:
 				if z-coordinate of event-block is between z of {spawnedge1} and z of {spawnedge2}:
 					cancel event
-					send "<#FF0000>You can't place blocks at spawn!"
+					send "<#FF0000>You can't break blocks at spawn!"
 			else if {spawnblocks::*} contains location of event-block:
 				cancel event
 				send "<#FF0000>You can't break blocks at spawn!"
