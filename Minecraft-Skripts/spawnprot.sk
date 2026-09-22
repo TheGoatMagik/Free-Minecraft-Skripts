@@ -1,5 +1,5 @@
 #======= This script lets you set a protected zone (Spawn), where players cant get damaged, break or place blocks. =======
-#======= Not tested!! Unfinished! =======
+#======= Creative gamemode overrides the Spawnprotection! =======
 options:
 	spawnworldname: world
 
@@ -9,51 +9,57 @@ command /setspawnprotection <integer>:
 	trigger:
 		set {_loc} to location of player
 		set {_radius} to arg-1
+		delete {spawnblocks::*}
+		set {spawnworld} to world of player
 		loop all blocks in radius {_radius}:
 			add location of block to {spawnblocks::*}
+		send "<#18FF00>Spawnprotection activated!"
 
 #======= This command lets you set a square as the Spawn. Use /setspawnloc1 for the first Edge and /setspawnloc2 for the opposite corner =======
 command /setspawnloc1:
 	permission: set.spawn
 	trigger:
-		set {spawnedge1x} to x-location of player
-		set {spawnedge1z} to z-location of player
+		set {spawnedge1} to location of player
 
 		send "<#18FF00>Edge 1 set! Use /setspawnloc2 to set the second corner!"
 
 command /setspawnloc2:
 	permission: set.spawn
 	trigger:
-		set {spawnedge2x} to x-location of player
-		set {spawnedge2z} to z-location of player
+		set {spawnedge2} to location of player
 		set {spawnworld} to world "{@spawnworldname}"
 		send "<#18FF00>Edge 2 set! Spawnprotection set!"
 
 on block break:
-	if world of player = {spawnworld}:
-		if x-location of event-block is between {spawnedge1x} and {spawnedge2x}:
-			if z-location of event-block is between {spawnedge1z} and {spawnedge2z}:
+	if gamemode of player is not creative:
+		if world of player = {spawnworld}:
+			if x-coordinate of event-block is between x of {spawnedge1} and x of {spawnedge2}:
+				if z-coordinate of event-block is between z of {spawnedge1} and z of {spawnedge2}:
+					cancel event
+					send "<#FF0000>You can't place blocks at spawn!"
+			else if {spawnblocks::*} contains location of event-block:
 				cancel event
-				send "<#FF0000>You can't place blocks at spawn!"
-		else if {spawnblocks::*} contains location of event-block:
-			cancel event
-			send "<#FF0000>You can't place blocks at spawn!"
+				send "<#FF0000>You can't break blocks at spawn!"
 			
 on place:
-	if world of player = {spawnworld}:
-		if x-location of event-block is between {spawnedge1x} and {spawnedge2x}:
-			if z-location of event-block is between {spawnedge1z} and {spawnedge2z}:
+	if gamemode of player is not creative:
+		if world of player = {spawnworld}:
+			if x-coordinate of event-block is between x of {spawnedge1} and x of {spawnedge2}:
+				if z-coordinate of event-block is between z of {spawnedge1} and z of {spawnedge2}:
+					cancel event
+					send "<#FF0000>You can't place blocks at spawn!"
+			else if {spawnblocks::*} contains location of event-block:
 				cancel event
 				send "<#FF0000>You can't place blocks at spawn!"
-		else if {spawnblocks::*} contains location of event-block:
-			cancel event
-			send "<#FF0000>You can't place blocks at spawn!"
 
 on damage:
-	if world of victim = {spawnworld}:
-		if x-location of victim is between {spawnedge1x} and {spawnedge2x}:
-			if z-location of victim is between {spawnedge1z} and {spawnedge2z}:
-		else if {spawnblocks::*} contains location of victim:
+	if victim is a player:
+		if world of victim = {spawnworld}:
+			if x-coordinate of victim is between x of {spawnedge1} and x of {spawnedge2}:
+				if z-coordinate of victim is between z of {spawnedge1} and z of {spawnedge2}:
+					cancel event
+					send "<#FF0000>You cant attack players at spawn!" to attacker
+			else if {spawnblocks::*} contains location of victim:
 				cancel event
 				send "<#FF0000>You can't attack players at spawn!" to attacker
 
