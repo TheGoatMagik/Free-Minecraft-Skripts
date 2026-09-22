@@ -1,0 +1,48 @@
+#======= Script that lets you create and manage Crates =======
+#======= Unfinished and Untested! =======
+command /crateedittor:
+	permission: edit.crates
+	trigger:
+		give player compass named "<#FFE700>Crate Editor" with lore "<#18FF00>Rightclick a Crate using this Item to open the Settings menu."
+		send "<#18FF00>Received Crate Editor Item"
+
+on right click on any shulker box using compass:
+	if player has permission "edit.crates":
+		if name of player's tool is "<#FFE700>Crate Editor":
+			if lore of player's tool is "<#18FF00>Rightclick a Crate using this Item to open the Settings menu.":
+				cancel event
+				set {_settings} to new chest inventory with 3 rows named "<#FFE700>Crate Settings"
+				open {_settings} to player
+				set {_slot} to 0
+				loop 10 times:
+					set slot {_slot} of {_settings} to gray stained glass pane named ""
+					add 1 to {_slot}
+				set slot 11 of {_settings} to nametag named "<#FFE700>Set Name of Crate"
+				set slot 13 of {_settings} to chest named <#FFE700>Set Lootpool of Crate"
+				set slot 15 of {_settings} to barrier named "<#FF0000>Delete Barrier"
+				set {_slot} to 17
+				loop 10 times:
+					set slot {_slot} of {_settings} to gray stained glass pane named ""
+					add 1 to {_slot}
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Crate Editor":
+		cancel event
+		if index of event-slot is 11:
+			close player's inventory
+			set {_anvil} to new anvil inventory named "<#FFE700>Rename Crate"
+			set slot 0 of {_anvil} to nametag
+			open {_anvil} to player
+
+on inventory close:
+	if name of event-inventory is "<#FFE700>Rename Crate":
+		set {_item} to slot 2 of event-inventory
+		set {_name} to name of {_item}
+		set 
+
+
+
+
+
+
+
