@@ -2,5 +2,5 @@
 command /repair:
 	permission: repair.use
 	trigger:
-		repair players tool
+		repair player's tool
 		send "<#18FF00>Tool repaired!"
