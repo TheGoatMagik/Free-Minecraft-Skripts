@@ -3,42 +3,161 @@
 command /crateedittor:
 	permission: edit.crates
 	trigger:
-		give player compass named "<#FFE700>Crate Editor" with lore "<#18FF00>Rightclick a Crate using this Item to open the Settings menu."
+		give player recovery compass named "<#FFE700>Crate Editor" with lore "<#18FF00>Rightclick a Crate using this Item to open the Settings menu."
 		send "<#18FF00>Received Crate Editor Item"
 
-on right click on any shulker box using compass:
-	if player has permission "edit.crates":
-		if name of player's tool is "<#FFE700>Crate Editor":
-			if lore of player's tool is "<#18FF00>Rightclick a Crate using this Item to open the Settings menu.":
-				cancel event
-				set {_settings} to new chest inventory with 3 rows named "<#FFE700>Crate Settings"
-				open {_settings} to player
-				set {_slot} to 0
-				loop 10 times:
-					set slot {_slot} of {_settings} to gray stained glass pane named ""
-					add 1 to {_slot}
-				set slot 11 of {_settings} to nametag named "<#FFE700>Set Name of Crate"
-				set slot 13 of {_settings} to chest named <#FFE700>Set Lootpool of Crate"
-				set slot 15 of {_settings} to barrier named "<#FF0000>Delete Barrier"
-				set {_slot} to 17
-				loop 10 times:
-					set slot {_slot} of {_settings} to gray stained glass pane named ""
-					add 1 to {_slot}
+command /cratekey <text> [<player>]:
+	permission: givekey.crate
+	trigger:
+		set {_found} to false
+		loop {crate::keys::*}:
+			if {crate::keys::%loop-index%::clean} is arg-1:
+				set {_key} to {crate::keys::%loop-index%::item}
+				set {_found} to true
+				stop loop
+		if {_found} is false:
+			send "<#FF0000>No Key with that name found!" to player
+			stop
+		set {_target} to player
+		if arg-2 is set:
+			set {_target} to arg-2
+		give {_target} {_key}
+		send "<#18FF00>Gave 1x <#FFE700>%name of {_key}% <#18FF00>to <#FFE700>%name of {_target}%<#18FF00>!" to player
+
+on tab complete of "/cratekey":
+	if player has permission "givekey.crate":
+		loop {crate::keys::*}:
+			add {crate::keys::%loop-index%::clean} to {_completions::*}
+		add {_completions::*} to tab completions
+
+on right click:
+	if "%event-block%" contains "shulker box":
+		if player's tool is recovery compass:
+			if player has permission "edit.crates":
+				if name of player's tool is "<#FFE700>Crate Editor":
+					if lore of player's tool is "<#18FF00>Rightclick a Crate using this Item to open the Settings menu.":
+						cancel event
+						set metadata tag "CurrentCrate" of player to location of event-block
+						set {_settings} to new chest inventory with 3 rows named "<#FFE700>Crate Settings"
+						set {_slot} to 0
+						loop 10 times:
+							set slot {_slot} of {_settings} to gray stained glass pane named ""
+							add 1 to {_slot}
+						set slot 10 of {_settings} to tripwire hook named "<#FFE700>Set Key for Crate"
+						set slot 11 of {_settings} to name tag named "<#FFE700>Set Name of Crate"
+						set slot 13 of {_settings} to chest named "<#FFE700>Set Lootpool of Crate"
+						set slot 15 of {_settings} to barrier named "<#FF0000>Delete Crate"
+						set {_loc} to location of event-block
+						if {crate::%{_loc}%::exists} is not set:
+							set slot 16 of {_settings} to lime dye named "<#18FF00>Create Crate"
+							set slot 4 of {_settings} to shulker box named "<#7F7F7F>Crate not existing"
+						else:
+							set slot 4 of {_settings} to shulker box named "%{crate::%{_loc}%::name}%"
+						set {_slot} to 17
+						loop 10 times:
+							set slot {_slot} of {_settings} to gray stained glass pane named ""
+							add 1 to {_slot}
+						open {_settings} to player
 
 on inventory click:
-	if name of player's current inventory is "<#FFE700>Crate Editor":
+	if name of event-inventory is "<#FFE700>Crate Settings":
 		cancel event
-		if index of event-slot is 11:
+		set {_loc} to metadata tag "CurrentCrate" of player
+		if {_loc} is not set:
+			stop
+		if index of event-slot is 10:
+			if {crate::%{_loc}%::exists} is not set:
+				send "<#FF0000>You must create the crate first!" to player
+				stop
 			close player's inventory
-			set {_anvil} to new anvil inventory named "<#FFE700>Rename Crate"
-			set slot 0 of {_anvil} to nametag
-			open {_anvil} to player
+			open real anvil inventory named "Set Key Name" to player
+			wait 1 tick
+			set slot 0 of player's current inventory to tripwire hook named "Enter Key Name"
+		else if index of event-slot is 11:
+			if {crate::%{_loc}%::exists} is not set:
+				send "<#FF0000>You must create the crate first!" to player
+				stop
+			close player's inventory
+			open real anvil inventory named "Rename Crate" to player
+			wait 1 tick
+			set slot 0 of player's current inventory to name tag named "Enter Crate Name"
+		else if index of event-slot is 13:
+			if {crate::%{_loc}%::exists} is not set:
+				send "<#FF0000>You must create the crate first!" to player
+				stop
+			close player's inventory
+			set {_lootpool_gui} to new chest inventory with 6 rows named "Crate Lootpool"
+			set {_slot} to 0
+			loop 54 times:
+				if {crate::%{_loc}%::lootpool::%{_slot}%} is set:
+					set slot {_slot} of {_lootpool_gui} to {crate::%{_loc}%::lootpool::%{_slot}%}
+				add 1 to {_slot}
+			open {_lootpool_gui} to player
+		else if index of event-slot is 16:
+			if event-slot is lime dye:
+				set {crate::%{_loc}%::exists} to true
+				set {crate::%{_loc}%::name} to "Crate"
+				send "<#18FF00>Crate has been created!"
+				close player's inventory
+		else if index of event-slot is 15:
+			delete {crate::%{_loc}%::exists}
+			delete {crate::%{_loc}%::name}
+			delete {crate::%{_loc}%::key::*}
+			delete {crate::%{_loc}%::lootpool::*}
+			send "<#FF0000>Crate has been deleted."
+			close player's inventory
+
+on anvil prepare:
+	if name of event-inventory is "Rename Crate" or "Set Key Name":
+		set anvil repair cost of event-inventory to 0
+
+on inventory click:
+	if type of event-inventory is anvil inventory:
+		set {_loc} to metadata tag "CurrentCrate" of player
+		if {_loc} is not set:
+			stop
+		if index of event-slot is 0 or 1:
+			cancel event
+		else if index of event-slot is 2:
+			cancel event
+			set {_name} to anvil text input of event-inventory
+			if {_name} is set:
+				if name of event-inventory is "Rename Crate":
+					if {_name} is not "Enter Crate Name":
+						set {crate::%{_loc}%::name} to {_name}
+						send "<#18FF00>New Crate name: %{crate::%{_loc}%::name}%" to player
+						set slot 0 of event-inventory to air
+						close player's inventory
+						delete metadata tag "CurrentCrate" of player
+				else if name of event-inventory is "Set Key Name":
+					if {_name} is not "Enter Key Name":
+						set {_clean} to uncolored {_name}
+						set {_key_item} to tripwire hook named {_name}
+						set {crate::%{_loc}%::key::item} to {_key_item}
+						set {crate::%{_loc}%::key::clean} to {_clean}
+						set {crate::keys::%{_loc}%::item} to {_key_item}
+						set {crate::keys::%{_loc}%::clean} to {_clean}
+						send "<#18FF00>Key has been set: %{_name}% <#18FF00>(ID: %{_clean}%)" to player
+						set slot 0 of event-inventory to air
+						close player's inventory
+						delete metadata tag "CurrentCrate" of player
 
 on inventory close:
-	if name of event-inventory is "<#FFE700>Rename Crate":
-		set {_item} to slot 2 of event-inventory
-		set {_name} to name of {_item}
-		set 
+	if name of event-inventory is "Crate Lootpool":
+		set {_loc} to metadata tag "CurrentCrate" of player
+		if {_loc} is not set:
+			stop
+		delete {crate::%{_loc}%::lootpool::*}
+		set {_slot} to 0
+		loop 54 times:
+			set {_item} to slot {_slot} of event-inventory
+			if {_item} is set:
+				if {_item} is not air:
+					set {crate::%{_loc}%::lootpool::%{_slot}%} to {_item}
+			add 1 to {_slot}
+		send "<#18FF00>Lootpool has been saved successfully!" to player
+		delete metadata tag "CurrentCrate" of player
+
 
 
 
