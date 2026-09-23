@@ -32,9 +32,9 @@ on join:
 
 every 1 minute:
 	loop all players:
-		add 1 to {playtime.%loop-player%}
-		if {playtime.%loop-player%} = 60:
-			set {playtime.%loop-player%} to 0
+		add 1 to {playtimeminutes.%loop-player%}
+		if {playtimeminutes.%loop-player%} = 60:
+			set {playtimeminutes.%loop-player%} to 0
 			add 1 to {playtimehours.%loop-player%}
 			if {playtimehours.%loop-player%} = 24:
 				set {playtimehours.%loop-player%} to 0
