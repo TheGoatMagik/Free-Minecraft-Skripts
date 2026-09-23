@@ -12,7 +12,7 @@ command /cratekey <text> [<player>]:
 		set {_found} to false
 		loop {crate::keys::*}:
 			if {crate::keys::%loop-index%::clean} is arg-1:
-				set {_key} to {crate::keys::%loop-index%::item}
+				set {_key} to tripwire hook named {crate::keys::%loop-index%::name}
 				set {_found} to true
 				stop loop
 		if {_found} is false:
@@ -72,7 +72,7 @@ on inventory click:
 			close player's inventory
 			open real anvil inventory named "Set Key Name" to player
 			wait 1 tick
-			set slot 0 of player's current inventory to tripwire hook named "Enter Key Name"
+			set slot 0 of player's current inventory to name tag named "Enter Key Name"
 		else if index of event-slot is 11:
 			if {crate::%{_loc}%::exists} is not set:
 				send "<#FF0000>You must create the crate first!" to player
@@ -132,12 +132,12 @@ on inventory click:
 				else if name of event-inventory is "Set Key Name":
 					if {_name} is not "Enter Key Name":
 						set {_clean} to uncolored {_name}
-						set {_key_item} to tripwire hook named {_name}
-						set {crate::%{_loc}%::key::item} to {_key_item}
+						set {_n} to colored {_name}
+						set {crate::%{_loc}%::key::name} to {_n}
+						set {crate::keys::%{_loc}%::name to {_n}
 						set {crate::%{_loc}%::key::clean} to {_clean}
-						set {crate::keys::%{_loc}%::item} to {_key_item}
 						set {crate::keys::%{_loc}%::clean} to {_clean}
-						send "<#18FF00>Key has been set: %{_name}% <#18FF00>(ID: %{_clean}%)" to player
+						send "<#18FF00>Key has been set: %{_n}% <#18FF00>(ID: %{_clean}%)" to player
 						set slot 0 of event-inventory to air
 						close player's inventory
 						delete metadata tag "CurrentCrate" of player
