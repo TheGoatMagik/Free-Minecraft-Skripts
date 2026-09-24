@@ -1,27 +1,30 @@
 #======= Script that lets you create and manage Crates =======
-#======= Unfinished and Untested! =======
 command /crateeditor:
 	permission: edit.crates
 	trigger:
 		give player recovery compass named "<#FFE700>Crate Editor" with lore "<#18FF00>Rightclick a Crate using this Item to open the Settings menu."
 		send "<#18FF00>Received Crate Editor Item"
 
-command /cratekey <text> [<player>]:
+command /cratekey <text> [<integer>] [<player>]:
 	permission: givekey.crate
 	trigger:
 		if {crate::keys::%arg-1%::clean} is set:
-			set {_key} to tripwire hook named {crate::keys::%arg-1%::name}
+			set {_key} to tripwire hook named {crate::keys::%arg-1%::name} with lore "<#6E6E6E>- Rightclick a Crate using this item"
 		set {_target} to player
+		if arg-3 is set:
+			set {_target} to arg-3
 		if arg-2 is set:
-			set {_target} to arg-2
-		give {_target} {_key}
+			set {_int} to arg-2
+		else:
+			set {_int} to 1
+		give {_target} {_int} of {_key}
 		send "<#18FF00>Gave 1x <#FFE700>%name of {_key}% <#18FF00>to <#FFE700>%name of {_target}%<#18FF00>!" to player
 
 on tab complete of "/cratekey":
 	if player has permission "givekey.crate":
 		loop {crate_key_list::*}:
 			add loop-value to {_completions::*}
-		add {_completions::*} to tab completions
+		add {_completions::*} to tab completions for position 1
 
 on right click:
 	if "%event-block%" contains "shulker box":
@@ -51,6 +54,114 @@ on right click:
 							set slot {_slot} of {_settings} to gray stained glass pane named ""
 							add 1 to {_slot}
 						open {_settings} to player
+		else if player's tool is tripwire hook:
+			cancel event
+			set {_name} to name of player's tool
+			if lore of player's tool is "<#6E6E6E>- Rightclick a Crate using this item":
+				set {_loc} to location of event-block
+				if {crate::%{_loc}%::key::name} is {_name}:
+					set metadata tag "IsOpeningCrate" of player to true
+					set metadata tag "ActiveCrateInventory" of player to {crate::%{_loc}%::name}
+					set {_c} to new chest inventory named {crate::%{_loc}%::name}
+					remove 1 of player's tool from player's tool
+					play sound "block.chest.open" with volume 1 and pitch 1 at {_loc} for player
+					set {_slot} to 0
+					loop 9 times:
+						set slot {_slot} of {_c} to gray stained glass pane named ""
+						set {_slot} to {_slot} + 1
+					set {_slot} to 18
+					loop 9 times:
+						set slot {_slot} of {_c} to gray stained glass pane named ""
+						set {_slot} to {_slot} + 1
+					set slot 4 of {_c} to lime stained glass pane named ""
+					set slot 22 of {_c} to lime stained glass pane named ""
+					set {_slot} to 9
+					loop 9 times:
+						set slot {_slot} of {_c} to random element out of {crate::%{_loc}%::lootpool::*}
+						set {_slot} to {_slot} + 1
+					open {_c} to player
+					set {_particleloc} to {_loc}
+					add 1.2 to y-coordinate of {_particleloc}
+					set {_wait} to 0.1 seconds
+					loop 30 times:
+						set {_slot} to 9
+						loop 8 times:
+							set slot {_slot} of {_c} to slot {_slot} + 1 of {_c}
+							set {_slot} to {_slot} + 1
+						set slot 17 of {_c} to random element out of {crate::%{_loc}%::lootpool::*}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at {_loc} for player
+						make 3 of flame particle at {_particleloc} with extra 0.1
+						wait {_wait}
+					set {_wait} to 0.3 seconds
+					loop 15 times:
+						set {_slot} to 9
+						loop 8 times:
+							set slot {_slot} of {_c} to slot {_slot} + 1 of {_c}
+							set {_slot} to {_slot} + 1
+						set slot 17 of {_c} to random element out of {crate::%{_loc}%::lootpool::*}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.2 at {_loc} for player
+						make 3 of flame particle at {_particleloc} with extra 0.1
+						wait {_wait}
+					set {_wait} to 0.5 seconds
+					loop 5 times:
+						set {_slot} to 9
+						loop 8 times:
+							set slot {_slot} of {_c} to slot {_slot} + 1 of {_c}
+							set {_slot} to {_slot} + 1
+						set slot 17 of {_c} to random element out of {crate::%{_loc}%::lootpool::*}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.0 at {_loc} for player
+						make 3 of flame particle at {_particleloc} with extra 0.1
+						wait {_wait}
+					set {_wait} to 0.8 seconds
+					set {_slot} to 9
+					loop 8 times:
+						set slot {_slot} of {_c} to slot {_slot} + 1 of {_c}
+						set {_slot} to {_slot} + 1
+					set slot 17 of {_c} to random element out of {crate::%{_loc}%::lootpool::*}
+					play sound "entity.experience_orb.pickup" with volume 0.6 and pitch 0.8 at {_loc} for player
+					make 3 of flame particle at {_particleloc} with extra 0.1
+					wait {_wait}
+					make 20 of explosion particle at {_particleloc} with extra 0.2
+					play sound "entity.player.levelup" with volume 1 and pitch 1 at {_loc} for player
+					if metadata tag "IsOpeningCrate" of player is true:
+						set {_reward} to slot 13 of {_c}
+						give player {_reward}
+						send "<#18FF00>You received %{_reward}%!" to player
+						delete metadata tag "IsOpeningCrate" of player
+						delete metadata tag "ActiveCrateInventory" of player
+						close player's inventory
+		else:
+			set {_loc} to location of event-block
+			if {crate::%{_loc}%::exists} is true:
+				cancel event
+				send "<#FF0000>You need the Crate Key %{crate::%{_loc}%::key::name}% <#FF0000>(ID: %{crate::%{_loc}%::key::clean}%)!"
+
+
+
+on inventory close:
+	if metadata tag "IsOpeningCrate" of player is true:
+		if name of event-inventory is metadata tag "ActiveCrateInventory" of player:
+			set {_reward} to slot 13 of event-inventory
+			give player {_reward}
+			play sound "entity.player.levelup" with volume 1 and pitch 1.2 at player for player
+			send "<#18FF00>You received %{_reward}%!" to player
+			delete metadata tag "IsOpeningCrate" of player
+			delete metadata tag "ActiveCrateInventory" of player
+
+on inventory click:
+	if metadata tag "IsOpeningCrate" of player is true:
+		if name of event-inventory is metadata tag "ActiveCrateInventory" of player:
+			cancel event
+
+on block break:
+	if "%event-block%" contains "shulker box":
+		set {_loc} to location of event-block
+		if {crate::%{_loc}%::exists} is true:
+			cancel event
+			if player has permission "edit.crates":
+				send "<#FF0000>If you want to remove this Crate, please delete it in the Crate Settings Menu!"
+
+
 
 on inventory click:
 	if name of event-inventory is "<#FFE700>Crate Settings":
@@ -100,6 +211,7 @@ on inventory click:
 			delete {crate::%{_loc}%::key::*}
 			delete {crate::%{_loc}%::lootpool::*}
 			send "<#FF0000>Crate has been deleted."
+			set block at {_loc} to air
 			close player's inventory
 
 on anvil prepare:
@@ -156,6 +268,10 @@ on inventory close:
 			add 1 to {_slot}
 		send "<#18FF00>Lootpool has been saved successfully!" to player
 		delete metadata tag "CurrentCrate" of player
+
+
+
+
 
 
 
