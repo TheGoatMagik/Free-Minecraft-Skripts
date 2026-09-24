@@ -1,7 +1,7 @@
 #======= This is like an Ad, you can automatically broadcast =======
 #======= You can change the Broadcast time by changing the "broadcasttime" option =======
 options:
-	broadcasttime: 5
+	broadcasttime: 20
 
 every {@broadcasttime} minutes:
 	if {autobroadcast} is not set:
@@ -13,8 +13,8 @@ command /setautobroadcast <text>:
 	permission: autobroadcast.set
 	trigger:
 		if arg-1 is not set:
-			send "&8[<#F3CF00>Autobroadcast&8] <#FF0000>You need to name the Broadcastmessage!"
-			stop
+			delete {autobroadcast}
+			send "<#FF0000>Deleted Autobroadcast Message"
 		set {_ab} to arg-1
 		set {autobroadcast} to colored {_ab}
 		send "&8[<#F3CF00>Autobroadcast&8] <#18FF00>Broadcasting message set succesfully!"
