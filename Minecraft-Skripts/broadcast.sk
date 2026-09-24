@@ -17,6 +17,8 @@ command /broadcast <text> <text>:
 			broadcast ""
 			broadcast "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 			broadcast ""
+			loop all players:
+				play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 			set {_chatpause} to true
 			wait 10 seconds
 			set {_chatpause} to false
@@ -27,6 +29,7 @@ command /broadcast <text> <text>:
 			loop all players:
 				loop 5 times:
 					send actionbar "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" to loop-player
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 					wait 2 seconds
 			stop
 
@@ -36,6 +39,7 @@ command /broadcast <text> <text>:
 			loop all players:
 				loop 10 times:
 					send title "<#0045FF>Broadcast <#A7A7A7>- <#4074FF>%{_countdown}%s" with subtitle "<#E3D66C>%{_message}%" to loop-player
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 					remove 1 from {_countdown}
 					wait 1 second
 			set {_countdown} to 0
@@ -51,48 +55,54 @@ command /broadcast <text> <text>:
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 0%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				if loop-value = 5:
 					set {_bar} to a boss bar:
 						set color of event-bossbar to blue
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 20%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				if loop-value = 4:
 					set {_bar} to a boss bar:
 						set color of event-bossbar to blue
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 40%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				if loop-value = 3:
 					set {_bar} to a boss bar:
 						set color of event-bossbar to blue
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 60%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				if loop-value = 2:
 					set {_bar} to a boss bar:
 						set color of event-bossbar to blue
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 80%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				if loop-value = 1:
 					set {_bar} to a boss bar:
 						set color of event-bossbar to blue
 						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
 						set progress of event-bossbar to 100%
 						set style of event-bossbar to 10 segments
-					add all players to viewers of {_bar}
-					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
+					loop all players:
+						add loop-player to viewers of {_bar}
+						play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of loop-player for loop-player
 				wait 2 seconds
 				remove all players from viewers of {_bar}
 				delete {_bar}
