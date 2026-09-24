@@ -1,7 +1,8 @@
 #======= Skript for the /tpa command =======
+#======= Not tested! =======
 command /tpa <player>:
 	trigger:
-		if {tpasent.%{_sender}%} is true:
+		if {tpasent.%player%} is true:
 			send actionbar "<#FF0000>You have already sent a TPA-Request"
 			stop
 		set {_sender} to player
@@ -14,9 +15,8 @@ command /tpa <player>:
 		send "<#18FF00>TPA-Request sent to <#FFE300>%{_receiver}%<#18FF00>!"
 		set {tpasent.%{_sender}%} to true
 		wait 1 minute
-		delete {tpasent.%{_sender}%}
 		if {tpaaccepted.%{_sender}%} is false:
-			send actionbar "<#FF0000>TPA-Request timed out"
+			send actionbar "<#FF0000>TPA-Request timed out" to {_sender}
 			delete {tpaaccepted.%{_sender}%}
 			delete {tpasent.%{_sender}%.%{_receiver}%}
 			delete {tpasent.%{_sender}%}
@@ -30,59 +30,10 @@ command /tpa <player>:
 			delete {tpalatest.%{_sender}%}
 			stop
 
-command /tpaccept [<player>]:
-	aliases: tpaaccept
-	trigger:
-		if arg-1 is set:
-			set {_sender} to arg-1
-			set {_receiver} to player
-			if {tpasent.%{_sender}%.%{_receiver}%} is not true:
-				send "<#FF0000>You do not have a normal TPA-Request from this player!" to {_receiver}
-				stop
-			set {tpaaccepted.%{_sender}%} to true
-			delete {tpaaccepted.%{_sender}%}
-			delete {tpasent.%{_sender}%::%{_receiver}%}
-			delete {tpasent.%{_sender}%}
-			delete {tpalatest.%{_receiver}%}
-			delete {_tpalatest.%{_sender}%}
-		else:
-			set {_receiver} to player
-			set {_sender} to {tpalatest.%{_receiver}%}
-			if {tpasent.%{_sender}%.%{_receiver}%} is true:
-				set {tpaaccepted.%{_sender}%} to true
-				delete {tpaaccepted.%{_sender}%}
-				delete {tpasent.%{_sender}%.%{_receiver}%}
-				delete {tpasent.%{_sender}%}
-				delete {tpalatest.%{_receiver}%}
-				delete {tpalatest.%{_sender}%}
-		
-		send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}%<#18FF00>!"
-#======= You can delete the following lines if you want players to be teleported immediatley =======
-				
-		set {_loc} to location of {_sender}
-		send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_receiver}% <#FFE300>in 5 seconds, don't move!" to {_sender}
-		set {_number} to 5
-		wait 1 second
-		loop 5 times:
-			if {_loc} = location of {_sender}:
-				send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_sender}
-				remove 1 from {_number}
-				wait 1 second
-			else:
-				send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_sender}
-				stop
-
-#=================================================================================================
-		
-
-		teleport {_sender} to {_receiver}
-
-
-
 #======= TPAHere Command =======
 command /tpahere <player>:
 	trigger:
-		if {tpaheresent.%{_sender}%} is true:
+		if {tpaheresent.%player%} is true:
 			send actionbar "<#FF0000>You have already sent a TPAHere-Request"
 			stop
 		set {_sender} to player
@@ -95,9 +46,8 @@ command /tpahere <player>:
 		send "<#18FF00>TPAHere-Request sent to <#FFE300>%{_receiver}%<#18FF00>!"
 		set {tpaheresent.%{_sender}%} to true
 		wait 1 minute
-		delete {tpaheresent.%{_sender}%}
 		if {tpahereaccepted.%{_sender}%} is false:
-			send actionbar "<#FF0000>TPAHere-Request timed out"
+			send actionbar "<#FF0000>TPAHere-Request timed out" to {_sender}
 			delete {tpahereaccepted.%{_sender}%}
 			delete {tpaheresent.%{_sender}%.%{_receiver}%}
 			delete {tpaheresent.%{_sender}%}
@@ -111,51 +61,67 @@ command /tpahere <player>:
 			delete {tpaherelatest.%{_sender}%}
 			stop
 
-command /tpahereaccept [<player>]:
+
+command /tpaccept [<player>]:
+	aliases: tpaaccept
 	trigger:
+		set {_receiver} to player
 		if arg-1 is set:
 			set {_sender} to arg-1
-			set {_receiver} to player
-			if {tpaheresent.%{_sender}%.%{_receiver}%} is not true:
-				send "<#FF0000>You do not have a TPAHere-Request from this player!" to {_receiver}
-				stop
+		else:
+			if {tpasent.%{tpalatest.%{_receiver}%}%.%{_receiver}%} is true:
+				set {_sender} to {tpalatest.%{_receiver}%}
+			else if {tpaheresent.%{tpaherelatest.%{_receiver}%}%.%{_receiver}%} is true:
+				set {_sender} to {tpaherelatest.%{_receiver}%}
+		
+		if {tpasent.%{_sender}%.%{_receiver}%} is true:
+			set {tpaaccepted.%{_sender}%} to true
+			delete {tpasent.%{_sender}%.%{_receiver}%}
+			delete {tpasent.%{_sender}%}
+			delete {tpalatest.%{_receiver}%}
+			delete {tpalatest.%{_sender}%}
+			
+			send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
+			
+			set {_loc} to location of {_sender}
+			send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_receiver}% <#FFE300>in 5 seconds, don't move!" to {_sender}
+			set {_number} to 5
+			loop 5 times:
+				if {_loc} = location of {_sender}:
+					send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_sender}
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_sender}
+					stop
+			teleport {_sender} to {_receiver}
+			stop
+
+		else if {tpaheresent.%{_sender}%.%{_receiver}%} is true:
 			set {tpahereaccepted.%{_sender}%} to true
-			delete {tpahereaccepted.%{_sender}%}
-			delete {tpaheresent.%{_sender}%::%{_receiver}%}
+			delete {tpaheresent.%{_sender}%.%{_receiver}%}
 			delete {tpaheresent.%{_sender}%}
 			delete {tpaherelatest.%{_receiver}%}
-			delete {_tpaherelatest.%{_sender}%}
+			delete {tpaherelatest.%{_sender}%}
+			
+			send actionbar "<#18FF00>Accepted TPAHere-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
+			
+			set {_loc} to location of {_receiver}
+			send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_sender}% <#FFE300>in 5 seconds, don't move!" to {_receiver}
+			set {_number} to 5
+			loop 5 times:
+				if {_loc} = location of {_receiver}:
+					send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_receiver}
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_receiver}
+					stop
+			teleport {_receiver} to {_sender}
+			stop
+			
 		else:
-			set {_receiver} to player
-			set {_sender} to {tpaherelatest.%{_receiver}%}
-			if {tpaheresent.%{_sender}%.%{_receiver}%} is true:
-				set {tpahereaccepted.%{_sender}%} to true
-				delete {tpahereaccepted.%{_sender}%}
-				delete {tpaheresent.%{_sender}%.%{_receiver}%}
-				delete {tpaheresent.%{_sender}%}
-				delete {tpaherelatest.%{_receiver}%}
-				delete {tpaherelatest.%{_sender}%}
-		
-		send actionbar "<#18FF00>Accepted TPAHere-Request from <#FFE300>%{_sender}%<#18FF00>!"
-#======= You can delete the following lines if you want players to be teleported immediatley =======
-				
-		set {_loc} to location of {_receiver}
-		send actionbar "<#FFE300>You will be teleported in 5 seconds, don't move!" to {_receiver}
-		set {_number} to 5
-		wait 1 second
-		loop 5 times:
-			if {_loc} = location of {_receiver}:
-				send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_receiver}
-				remove 1 from {_number}
-				wait 1 second
-			else:
-				send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_receiver}
-				stop
-
-#=================================================================================================
-		
-
-		teleport {_receiver} to {_sender}
+			send "<#FF0000>You don't have any active teleport requests!" to {_receiver}
 
 
 
