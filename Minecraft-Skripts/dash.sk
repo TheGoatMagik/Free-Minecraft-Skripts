@@ -1,0 +1,24 @@
+#======= A simple Script, that adds a crafting recipe for a custom feather that lets you dash =======
+options:
+	cooldown: 20 seconds
+	dashpower: 2
+
+on load:
+	set {_dash} to feather named "<#FFE700>Dash" with lore "<#6B6B6B>Rightclick using this Item to Dash"
+	register new shaped recipe for {_dash} using air and feather and air and feather and potion of swiftness and feather and air and feather and air with id "dash_feather"
+	
+on right click with feather:
+	if name of player's tool is "<#FFE700>Dash":
+		if lore of player's tool is "<#6B6B6B>Rightclick using this Item to Dash":
+			if {dashcooldown.%player%} is false:
+				push player forward at speed 1.6
+				set {dashcooldown.%player%} to true
+				wait {@cooldown}
+				set {dashcooldown.%player%} to false
+			if {dashcooldown.%player%} is not set:
+				push player forward at speed {@dashpower}
+				set {dashcooldown.%player%} to true
+				wait {@cooldown}
+				set {dashcooldown.%player%} to false
+			else:
+				send actionbar "<#FF0000>Still on Cooldown" to player
