@@ -46,27 +46,56 @@ command /broadcast <text> <text>:
 		if arg-1 is "bossbar":
 			loop 6 times:
 				if loop-value = 6:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 0
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 0%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				if loop-value = 5:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 20
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 20%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				if loop-value = 4:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 40
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 40%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				if loop-value = 3:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 60
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 60%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				if loop-value = 2:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 80
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 80%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				if loop-value = 1:
-					set {_bar} to boss bar with id "broadcast" with title "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%" with color blue with progress 100
-					add all players to {_bar}
+					set {_bar} to a boss bar:
+						set color of event-bossbar to blue
+						set title of event-bossbar to "<#0045FF>Broadcast <#A7A7A7>- <#E3D66C>%{_message}%"
+						set progress of event-bossbar to 100%
+						set style of event-bossbar to 10 segments
+					add all players to viewers of {_bar}
+					play sound "entity.experience_orb.pickup" with volume 0.5 and pitch 1.5 at location of player for player
 				wait 2 seconds
-				remove all players from {_bar}
+				remove all players from viewers of {_bar}
 				delete {_bar}
-				execute console command "/bossbar remove minecraft:broadcast"
            
 on tab complete for "/broadcast":
 	set tab completion for position 1 to "text" and "actionbar" and "title" and "bossbar"
