@@ -1,5 +1,4 @@
 #======= Skript for the /tpa command =======
-#======= Not tested! =======
 command /tpa <player>:
 	trigger:
 		if {tpasent.%player%} is true:
