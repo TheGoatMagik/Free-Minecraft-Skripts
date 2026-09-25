@@ -4,3 +4,11 @@ command /repair:
 	trigger:
 		repair player's tool
 		send "<#18FF00>Tool repaired!"
+
+#======= Repairs all Items in a player's inventory =======
+command /repairall:
+	permission: repair.use
+	trigger:
+		loop all items in player's inventory:
+			repair loop-item
+		send "<#18FF00>Repaired all Items in your inventory!"
