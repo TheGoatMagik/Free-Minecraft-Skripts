@@ -1,7 +1,5 @@
 #======= This script lets you set a protected zone (Spawn), where players cant get damaged, break or place blocks. =======
-#======= Creative gamemode overrides the Spawnprotection! =======
-options:
-	spawnworldname: world
+#======= Creative gamemode with permission "spawn.set" overrides the Spawnprotection! =======
 
 #======= This command lets you set a round area with the given Radius as the Spawn =======
 command /setspawnprotection <integer>:
@@ -27,20 +25,21 @@ command /setspawnloc2:
 	permission: set.spawn
 	trigger:
 		set {spawnedge2} to location of player
-		set {spawnworld} to world "{@spawnworldname}"
+		set {spawnworld} to world of player
 		send "<#18FF00>Edge 2 set! Spawnprotection set!"
 
 on block break:
-	if gamemode of player is not creative:
-		if player does not have permission "set.spawn":
-			if world of player = {spawnworld}:
-				if x-coordinate of event-block is between x of {spawnedge1} and x of {spawnedge2}:
-					if z-coordinate of event-block is between z of {spawnedge1} and z of {spawnedge2}:
-						cancel event
-						send "<#FF0000>You can't break blocks at spawn!"
-				else if {spawnblocks::*} contains location of event-block:
-					cancel event
-					send "<#FF0000>You can't break blocks at spawn!"
+	if world of player = {spawnworld}:
+		if x-coordinate of event-block is between x of {spawnedge1} and x of {spawnedge2}:
+			if z-coordinate of event-block is between z of {spawnedge1} and z of {spawnedge2}:
+				if player has permission "set.spawn":
+					if player's gamemode is creative:
+						stop
+				cancel event
+				send "<#FF0000>You can't break blocks at spawn!"
+		else if {spawnblocks::*} contains location of event-block:
+			cancel event
+			send "<#FF0000>You can't break blocks at spawn!"
 			
 on place:
 	if gamemode of player is not creative:
