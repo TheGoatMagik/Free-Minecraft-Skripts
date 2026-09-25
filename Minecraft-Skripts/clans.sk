@@ -1,0 +1,210 @@
+#======= A script for a whole Clansystem. =======
+#======= Not practically tested! =======
+command /clan <text> [<text>]:
+    trigger:
+        if arg-1 is "create":
+            if arg-2 is set:
+                if {inclan.%player's uuid%} is not true:
+                    if {clan.%arg-2%} is not true:
+                        set {clanexist.%arg-2%} to true
+                        set {clan.%arg-2%} to true
+                        set {clan.%player's uuid%} to arg-2
+                        set {clanname.%arg-2%} to arg-2
+                        clear {clan::%arg-2%::*}
+                        add arg-2 to {clans::*}
+                        add player's name to {clan::%arg-2%::*}
+                        set {inclan.%player's uuid%} to true
+                        set {clancreator::%arg-2%} to player's uuid
+                        send "<#18FF00>Clan %arg-2% created!"
+                        send "<#18FF00>You joined Clan %arg-2%!"
+                    else:
+                        send "<#FF0000>There already is a Clan with this name!"
+                else:
+                    send "<#FF0000>You are already in a Clan! Try /clan leave!"
+            else:
+                send "<#FF0000>You need to give the Clan a name! Try /clan create <name>!"
+            stop
+            
+        if arg-1 is "leave":
+            if {inclan.%player's uuid%} is true:
+                set {_clan} to {clan.%player's uuid%}
+                if {clancreator::%{_clan}%} is player's uuid:
+                    send "<#FF0000>You can't leave this Clan, because you are the creator! Try /clan delete!"
+                    stop
+                send "<#FF0000>You left the Clan %{_clan}%!"
+                remove player's name from {clan::%{_clan}%::*}
+                delete {clan.%player's uuid%}
+                delete {inclan.%player's uuid%}
+                if size of {clan::%{_clan}%::*} is 0:
+                    remove {_clan} from {clans::*}
+                    set {clanexist.%{_clan}%} to false
+                    delete {clancreator::%{_clan}%}
+                    delete {clan.%{_clan}%}
+                    delete {clanname.%{_clan}%}
+                    send "<#FF0000>Your Clan has been deleted because it was empty!"
+            else:
+                send "<#FF0000>You are in no Clan!"
+            stop
+            
+        if arg-1 is "list":
+            if arg-2 is not set:
+                if {inclan.%player's uuid%} is true:
+                    set {_clan} to {clan.%player's uuid%}
+                    send "<#FFE700>Members of your Clan: %{clan::%{_clan}%::*}%"
+                else:
+                    send "<#FF0000>You are in no Clan! Join one or use /clan list <clanname>!"
+                stop
+            if arg-2 is set:
+                if {clanexist.%arg-2%} is true:
+                    send "<#FFE700>Members of the Clan %{clanname.%arg-2%}%: %{clan::%arg-2%::*}%"
+                else:
+                    send "<#FF0000>This Clan doesn't exist!"
+                stop
+            stop
+            
+        if arg-1 is "delete":
+            set {_clan} to {clan.%player's uuid%}
+            if {clancreator::%{_clan}%} is player's uuid:
+                set {clanexist.%{_clan}%} to false
+                loop {clan::%{_clan}%::*}:
+                    set {_p} to loop-value parsed as offline player
+                    delete {inclan.%{_p}'s uuid%}
+                    delete {clan.%{_p}'s uuid%}
+                    if {_p} is online:
+                        send "<#FF0000>Your Clan has been deleted! You have been automatically removed." to {_p}
+                remove {_clan} from {clans::*}
+                delete {clancreator::%{_clan}%}
+                delete {clan.%{_clan}%}
+                delete {clanname.%{_clan}%}
+                delete {clan::%{_clan}%::*}
+                send "<#FF0000>Your Clan has been deleted!"
+            else:
+                send "<#FF0000>You are not the Owner of your Clan! Try /clan leave!"
+            stop
+            
+        if arg-1 is "creator":
+            if arg-2 is not set:
+                if {inclan.%player's uuid%} is true:
+                    set {_clan} to {clan.%player's uuid%}
+                    set {_creator} to {clancreator::%{_clan}%} parsed as offline player
+                    send "<#18FF00>The Clan Creator of your Clan is: %{_creator}'s name%."
+                else:
+                    send "<#FF0000>You are in no Clan!"
+                stop
+            if arg-2 is set:
+                if {clanexist.%arg-2%} is true:
+                    set {_creator} to {clancreator::%arg-2%} parsed as offline player
+                    send "<#18FF00>The Clan Creator of %{clanname.%arg-2%}% is: %{_creator}'s name%."
+                else:
+                    send "<#FF0000>This Clan doesn't exist!"
+                stop
+            stop
+            
+        if arg-1 is "me":
+            if {inclan.%player's uuid%} is true:
+                send "<#18FF00>You're in the Clan %{clan.%player's uuid%}%!"
+            else:
+                send "<#FF0000>You are in no Clan!"
+            stop
+
+        if arg-1 is "invite":
+            if {inclan.%player's uuid%} is true:
+                set {_clan} to {clan.%player's uuid%}
+                if {clancreator::%{_clan}%} is player's uuid:
+                    if arg-2 is set:
+                        set {_target} to arg-2 parsed as player
+                        if {_target} is online:
+                            if {inclan.%{_target}'s uuid%} is not true:
+                                set {claninvite::%{_target}'s uuid%::%{_clan}%} to true
+                                send "<#18FF00>You invited %{_target}% to your Clan!"
+                                send "<#18FF00>You have been invited to join Clan %{_clan}%! Type <#FFE700>/clan accept %{_myclan}% <#18FF00>to join!" to {_target}
+                            else:
+                                send "<#FF0000>This player is already in a Clan!"
+                        else:
+                            send "<#FF0000>This player is not online!"
+                    else:
+                        send "<#FF0000>You need to specify a player! Try /clan invite <player>!"
+                else:
+                    send "<#FF0000>Only the Clan Creator can invite players!"
+            else:
+                send "<#FF0000>You are in no Clan!"
+            stop
+
+        if arg-1 is "accept":
+            if {inclan.%player's uuid%} is not true:
+                if arg-2 is set:
+                    if {clanexist.%arg-2%} is true:
+                        if {claninvite::%player's uuid%::%arg-2%} is true:
+                            delete {claninvite::%player's uuid%::%arg-2%}
+                            set {clan.%player's uuid%} to arg-2
+                            set {inclan.%player's uuid%} to true
+                            add player's name to {clan::%arg-2%::*}
+                            send "<#18FF00>You joined Clan %arg-2%!"
+                            loop {clan::%arg-2%::*}:
+                                set {_member} to loop-value parsed as player
+                                if {_member} is online:
+                                    if {_member} is not player:
+                                        send "<#18FF00>%player% joined your Clan!" to {_member}
+                        else:
+                            send "<#FF0000>You don't have an invite from this Clan!"
+                    else:
+                        send "<#FF0000>This Clan doesn't exist!"
+                else:
+                    send "<#FF0000>You need to specify the Clan Name! Try /clan accept <clanname>!"
+            else:
+                send "<#FF0000>You are already in a Clan! Try /clan leave!"
+            stop
+            
+        else:
+            send "<#FF0000>This command doesn't exist! Try <#FFE700>/clan (create | leave | delete | list | me | creator | invite | accept) <#FF0000>or <#FFE700>/clans<#FF0000>!"
+
+on join:        
+    if {clan.%player's uuid%} is set:
+        set {_clan} to {clan.%player's uuid%}
+        if {clanexist.%{_clan}%} is not true:
+            remove player's name from {clan::%{_clan}%::*}
+            delete {clan.%player's uuid%}
+            delete {inclan.%player's uuid%}
+            send "<#FF0000>Your Clan has been deleted! You have automatically been removed."
+
+command /clans:
+    trigger:
+        if size of {clans::*} is 0:
+            send "<#FF0000>There are no Clans yet!"
+            stop
+        send "<#FF0000>All Clans: <#FFE700>%{clans::*}%"
+
+command /deleteclan <text>:
+    permission: delete.clan
+    trigger:
+        if {clanexist.%arg-1%} is true:
+            set {clanexist.%arg-1%} to false
+            loop {clan::%arg-1%::*}:
+                set {_p} to loop-value parsed as offline player
+                delete {inclan.%{_p}'s uuid%}
+                delete {clan.%{_p}'s uuid%}
+                if {_p} is online:
+                    send "<#FF0000>Your Clan has been deleted! You have been automatically removed." to {_p}
+            remove arg-1 from {clans::*}
+            delete {clancreator::%arg-1%}
+            delete {clan.%arg-1%}
+            delete {clanname.%arg-1%}
+            delete {clan::%arg-1%::*}
+            send "<#FF0000>The Clan %arg-1% has been administrativly deleted!"
+        else:
+            send "<#FF0000>This Clan doesn't exist!"
+
+
+
+
+
+
+
+
+
+
+        
+                
+                    
+            
+                    
