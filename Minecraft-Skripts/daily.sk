@@ -1,0 +1,84 @@
+#======= This script gives players daily rewards (Items), that can be set inside of a GUi =======
+command /setdailylootpool:
+	permission: daily.settings
+	trigger:
+		set {_inv} to new chest inventory with 6 rows named "<#FFE700>Daily Rewards - Loot Pool"
+		set {_slot} to 0
+		loop 54 times:
+			if {daily::lootpool::%{_slot}%} is set:
+				set slot {_slot} of {_inv} to {daily::lootpool::%{_slot}%}
+			set {_slot} to {_slot} + 1
+		open {_inv} to player
+
+on inventory close:
+	if name of event-inventory is "<#FFE700>Daily Rewards - Loot Pool":
+		set {_slot} to 0
+		loop 54 times:
+			set {_item} to slot {_slot} of event-inventory
+			if {_item} is set:
+				if {_item} is not air:
+					set {daily::lootpool::%{_slot}%} to {_item}
+			set {_slot} to {_slot} + 1
+
+
+command /daily:
+	trigger:
+		set {_date} to now formatted as "dd.MM.yyyy"
+		if {date::%player%} is not {_date}:
+			set {_index} to 9
+			loop 4 times:
+				set {daily::%player%::%{_index}%::reward} to {daily::%player%::%{_index} + 1%::reward}
+				set {_index} to {_index} + 1
+			delete {daily::%player%::13::reward}
+		set {_inv} to new chest inventory with 3 rows named "<#18FF00>Daily Rewards"
+		set {_slot} to 0
+		loop 9 times:
+			set slot {_slot} of {_inv} to gray stained glass pane named ""
+			set {_slot} to {_slot} + 1
+		set {_slot} to 18
+		loop 9 times:
+			set slot {_slot} of {_inv} to gray stained glass pane named ""
+			set {_slot} to {_slot} + 1
+		set {_slot} to 9
+		loop 4 times:
+			if {daily::%player%::%{_slot}%::reward} is not set:
+				set slot {_slot} of {_inv} to air
+			else if {daily::%player%::%{_slot}%::reward} is set:
+				set slot {_slot} of {_inv} to {daily::%player%::%{_slot}%::reward}
+			set {_slot} to {_slot} + 1
+		set slot 14 of {_inv} to yellow bundle named "<#FFE700>1 Day"
+		set slot 15 of {_inv} to yellow bundle named "<#FFE700>2 Days"
+		set slot 16 of {_inv} to yellow bundle named "<#FFE700>3 Days"
+		set slot 17 of {_inv} to yellow bundle named "<#FFE700>4 Days"
+		set slot 4 of {_inv} to lime stained glass pane named ""
+		set slot 22 of {_inv} to lime stained glass pane named ""
+
+		if {date::%player%} is not {_date}:
+			set slot 13 of {_inv} to lime bundle named "<#18FF00>Todays Reward"
+		else:
+			set slot 13 of {_inv} to {daily::%player%::13::reward}
+		open {_inv} to player
+
+
+
+on inventory click:
+	if name of event-inventory is "<#18FF00>Daily Rewards":
+		cancel event
+		if index of event-slot is 13:
+			if event-slot is lime bundle:
+				set {_freeslot} to false
+				set {_slot} to 0
+				loop 36 times:
+					if slot {_slot} of inventory of player is air:
+						set {_freeslot} to true
+						stop loop
+					set {_slot} to {_slot} + 1
+				if {_freeslot} is true:
+					set {daily::%player%::13::reward} to random element out of {daily::lootpool::*}
+					set slot 13 of current inventory of player to {daily::%player%::13::reward}
+					give {daily::%player%::13::reward} to player
+					send "<#18FF00>Received Daily Reward!"
+					set {_date} to now formatted as "dd.MM.yyyy"
+					set {date::%player%} to {_date}
+				else:
+					send "<#FF0000>You don't have free Space in your inventory!"
