@@ -196,7 +196,8 @@ command /deleteclan <text>:
 
 
 
-
+on tab complete for "/clan":
+	set tab completion for position 1 to "create" and "leave" and "delete" and "invite" and "accept" and "list" and "me" and "creator"
 
 
 
