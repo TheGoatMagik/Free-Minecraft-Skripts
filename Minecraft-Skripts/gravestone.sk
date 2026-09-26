@@ -1,0 +1,39 @@
+on death:
+    if victim is a player:
+        set {_loc} to location of victim
+        set x-coordinate of {_loc} to floor(x-coordinate of {_loc})
+        set y-coordinate of {_loc} to floor(y-coordinate of {_loc})
+        set z-coordinate of {_loc} to floor(z-coordinate of {_loc})
+        set block at {_loc} to victim's skull
+        set {gravename.%{_loc}%} to "<#FFE700>%victim%<#FAEDCB>'s skull"
+        loop 41 times:
+            set {_slot} to loop-number - 1
+            set {_item} to slot {_slot} of victim's inventory
+            if {_item} is set:
+                set {grave::%{_loc}%::%{_slot}%} to {_item}
+        clear drops
+
+on right click on player head:
+    set {_loc} to location of event-block
+    set x-coordinate of {_loc} to floor(x-coordinate of {_loc})
+    set y-coordinate of {_loc} to floor(y-coordinate of {_loc})
+    set z-coordinate of {_loc} to floor(z-coordinate of {_loc})
+    if size of {grave::%{_loc}%::*} is greater than 0:
+        cancel event
+        set {_inv} to chest inventory with 6 rows named {gravename.%{_loc}%}
+        loop 41 times:
+            set {_slot} to loop-number - 1
+            if {grave::%{_loc}%::%{_slot}%} is set:
+                set slot {_slot} of {_inv} to {grave::%{_loc}%::%{_slot}%}
+        set metadata tag "ActiveGraveLocation" of player to {_loc}
+        open {_inv} to player
+
+on inventory close:
+    if metadata tag "ActiveGraveLocation" of player is set:
+        set {_loc} to metadata tag "ActiveGraveLocation" of player
+        delete metadata tag "ActiveGraveLocation" of player
+        if {grave::%{_loc}%::*} is set:
+            delete {grave::%{_loc}%::*}
+            delete {gravename.%{_loc}%}
+            if block at {_loc} is player head or player wall head:
+                set block at {_loc} to air
