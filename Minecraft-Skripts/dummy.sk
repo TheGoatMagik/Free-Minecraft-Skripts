@@ -1,0 +1,24 @@
+#======= This script lets you spawn dummys for pvp training =======
+command /spawndummy:
+	permission: dummy.spawn
+	trigger:
+		set {_nbt} to nbt compound from "{NoGravity:1b}"
+		spawn 1 armor stand at player's location with nbt {_nbt}
+		set metadata tag "CustomArmorStand" of last spawned armor stand to true
+		send "<#18FF00>Succesfully spawned a dummy!"
+        
+command /removedummy:
+	permission: dummy.remove
+	trigger:
+		set {_target} to targeted entity
+		if {_target} is an armor stand:
+			kill {_target}
+			send "<#18FF00>Dummy has been removed!"
+		else:
+			send "<#FF0000>You are not looking at a Dummy!"
+			stop
+            
+on damage of armor stand:
+	if metadata tag "CustomArmorStand" of victim is true:
+		set max health of victim to 1024
+		set health of victim to 1024
