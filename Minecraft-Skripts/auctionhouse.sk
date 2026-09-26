@@ -1,0 +1,317 @@
+#======= AH Script that lets you sell and buy items. Features: Quickbuy, Search, Deleteauctions (Admin)... =======
+options:
+	maxauctions: 45
+
+function ahOpen(p: player):
+	loop {ah::item::*}:
+		if {ah::searchtext::%{_p}%} is not set:
+			add loop-index to {_ids::*}
+		else:
+			set {_itemtext} to "%loop-value%"
+			if {_itemtext} contains {ah::searchtext::%{_p}%}:
+				add loop-index to {_ids::*}
+
+	set {_pages} to ceil(size of {_ids::*} / 45)
+	if {_pages} < 1:
+		set {_pages} to 1
+	if {ah::page::%{_p}%} is not set:
+		set {ah::page::%{_p}%} to 1
+	if {ah::page::%{_p}%} > {_pages}:
+		set {ah::page::%{_p}%} to {_pages}
+	set {_page} to {ah::page::%{_p}%}
+
+	set {_inv} to new chest inventory with 6 rows named "<#FFE700>Auction House"
+	delete {ah::slotmap::%{_p}%::*}
+	loop 45 times:
+		set {_slot} to loop-number - 1
+		set {_index} to ({_page} - 1) * 45 + loop-number
+		set {_id} to {_ids::%{_index}%}
+		if {_id} is set:
+			set {_item} to {ah::item::%{_id}%}
+			set {_seller} to {ah::seller::%{_id}%}
+			set {_price} to {ah::price::%{_id}%}
+			if {ah::deletemode::%{_p}%} is true:
+				set {_action} to "<#FF0000>Shift-click to delete"
+			else if {_seller} is "%{_p}%":
+				set {_action} to "<#18FF00>Click to get your item back"
+			else:
+				set {_action} to "<#18FF00>Click to buy"
+			set lore of {_item} to "<#FFE700>Seller: %{_seller}%", "<#FFE700>Price: %{_price}% Money" and {_action}
+			set slot {_slot} of {_inv} to {_item}
+			set {ah::slotmap::%{_p}%::%{_slot}%} to {_id}
+
+	loop 9 times:
+		set slot (loop-number + 44) of {_inv} to gray stained glass pane named ""
+	set {_pageinfo} to "<#FFE700>Page %{_page}% of %{_pages}%"
+	set {_searchinfo} to "<#FFE700>Click to search"
+	if {ah::searchtext::%{_p}%} is set:
+		set {_searchtext} to {ah::searchtext::%{_p}%}
+		set {_searchinfo} to "<#FFE700>Searching for: %{_searchtext}%"
+	set {_head} to player head named "<#FFE700>My Auctions"
+	set skull owner of {_head} to {_p}
+	set slot 45 of {_inv} to arrow named "<#FFE700>Previous Page" with lore {_pageinfo}
+	set slot 48 of {_inv} to oak sign named "<#FFE700>Search" with lore {_searchinfo}
+	set slot 49 of {_inv} to {_head}
+	set slot 53 of {_inv} to arrow named "<#FFE700>Next Page" with lore {_pageinfo}
+	open {_inv} to {_p}
+
+function ahOpenMyAuctions(p: player):
+	set {_inv} to new chest inventory with 6 rows named "<#FFE700>My Auctions"
+	delete {ah::myslotmap::%{_p}%::*}
+	set {_slot} to 0
+	loop {ah::seller::*}:
+		if loop-value is "%{_p}%":
+			if {_slot} < 45:
+				set {_id} to loop-index
+				set {_item} to {ah::item::%{_id}%}
+				set {_price} to {ah::price::%{_id}%}
+				set lore of {_item} to "<#FFE700>Price: %{_price}% Money" and "<#18FF00>Click to get your item back"
+				set slot {_slot} of {_inv} to {_item}
+				set {ah::myslotmap::%{_p}%::%{_slot}%} to {_id}
+				add 1 to {_slot}
+	loop 9 times:
+		set slot (loop-number + 44) of {_inv} to gray stained glass pane named ""
+	set slot 49 of {_inv} to arrow named "<#FFE700>Back"
+	open {_inv} to {_p}
+
+function ahOpenConfirm(p: player, id: text):
+	set {ah::pendingid::%{_p}%} to {_id}
+	set {_price} to {ah::price::%{_id}%}
+	set {_inv} to new chest inventory with 3 rows named "<#FFE700>Confirm Purchase"
+	loop 27 times:
+		set slot (loop-number - 1) of {_inv} to black stained glass pane named ""
+	set slot 11 of {_inv} to lime wool named "<#18FF00>Confirm Purchase" with lore "<#FFE700>Price: %{_price}% Money"
+	set slot 13 of {_inv} to {ah::item::%{_id}%}
+	set slot 15 of {_inv} to red wool named "<#FF0000>Cancel"
+	open {_inv} to {_p}
+
+function ahBuy(p: player, id: text):
+	if {ah::item::%{_id}%} is not set:
+		send "<#FF0000>This item is no longer available!" to {_p}
+		stop
+	set {_item} to {ah::item::%{_id}%}
+	set {_price} to {ah::price::%{_id}%}
+	set {_seller} to {ah::seller::%{_id}%}
+
+	if {money.%{_p}%} < {_price}:
+		send "<#FF0000>You don't have enough money!" to {_p}
+		stop
+	if {_p} doesn't have enough space for {_item}:
+		send "<#FF0000>You don't have enough inventory space!" to {_p}
+		stop
+
+	remove {_price} from {money.%{_p}%}
+	add {_price} to {money.%{_seller}%}
+	give {_item} to {_p}
+	ahRemove({_id})
+
+	send "<#18FF00>You bought %{_item}% for %{_price}% Money!" to {_p}
+	reloadScoreboard({_p})
+	loop all players:
+		if loop-player's name is {_seller}:
+			send "<#18FF00>%{_p}% bought your %{_item}% for %{_price}% Money!" to loop-player
+			reloadScoreboard(loop-player)
+
+function ahRefund(p: player, id: text):
+	set {_item} to {ah::item::%{_id}%}
+	if {_p} doesn't have enough space for {_item}:
+		send "<#FF0000>You don't have enough inventory space!" to {_p}
+		stop
+	give {_item} to {_p}
+	ahRemove({_id})
+	send "<#18FF00>You got your item back!" to {_p}
+
+function ahRemove(id: text):
+	delete {ah::item::%{_id}%}
+	delete {ah::price::%{_id}%}
+	delete {ah::seller::%{_id}%}
+
+
+
+command /ah [<text>] [<integer>]:
+	trigger:
+		if arg-1 is not set:
+			delete {ah::searchtext::%player%}
+			set {ah::deletemode::%player%} to false
+			set {ah::page::%player%} to 1
+			ahOpen(player)
+
+		else if arg-1 is "sell":
+			if arg-2 is not set:
+				send "<#FF0000>You need to enter a price!" to player
+				stop
+			if arg-2 <= 0:
+				send "<#FF0000>The price has to be higher than 0!" to player
+				stop
+			if player's tool is air:
+				send "<#FF0000>You need to hold the item you want to sell!" to player
+				stop
+
+			set {_count} to 0
+			loop {ah::seller::*}:
+				if loop-value is "%player%":
+					add 1 to {_count}
+			if {_count} >= {@maxauctions}:
+				send "<#FF0000>You can't have more than {@maxauctions} auctions at the same time!" to player
+				stop
+
+			add 1 to {ah::nextid}
+			while {ah::item::%{ah::nextid}%} is set:
+				add 1 to {ah::nextid}
+			set {_id} to "%{ah::nextid}%"
+
+			set {ah::item::%{_id}%} to player's tool
+			set {ah::price::%{_id}%} to arg-2
+			set {ah::seller::%{_id}%} to "%player%"
+			clear player's tool
+			send "<#18FF00>You listed your item for %arg-2% Money!" to player
+
+		else if arg-1 is "quickbuy":
+			if {ah::quickbuy::%player%} is true:
+				set {ah::quickbuy::%player%} to false
+				send "<#FFE700>Quickbuy is now OFF. You will need to confirm purchases." to player
+			else:
+				set {ah::quickbuy::%player%} to true
+				send "<#18FF00>Quickbuy is now ON. Clicking an item buys it instantly." to player
+
+		else if arg-1 is "deleteauctions":
+			if player does not have permission "ah.admin":
+				send "<#FF0000>You don't have permission to do that!" to player
+				stop
+			delete {ah::searchtext::%player%}
+			set {ah::deletemode::%player%} to true
+			set {ah::page::%player%} to 1
+			send "<#FF0000>Shift-click an auction to remove it." to player
+			ahOpen(player)
+
+		else:
+			if player has permission "ah.admin":
+				send "<#FF0000>Unknown command. Try /ah, /ah sell <price>, /ah quickbuy" to player
+			else:
+				send "<#FF0000>Unknown command. Try /ah, /ah sell <price>" to player
+
+on tab complete of "/ah":
+	if player has permission "ah.admin":
+		set tab completions for position 1 to "sell" and "quickbuy" and "deleteauctions"
+	else:
+		set tab completions for position 1 to "sell" and "quickbuy"
+	if tab arg 1 is "sell":
+		set tab completions for position 2 to "1000" and "10000" and "100000" and "1000000"
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Auction House":
+		cancel event
+		if name of event-inventory is not "<#FFE700>Auction House":
+			stop
+		set {_slot} to index of event-slot
+
+		if {_slot} is 45:
+			if {ah::page::%player%} > 1:
+				remove 1 from {ah::page::%player%}
+			ahOpen(player)
+
+		else if {_slot} is 53:
+			add 1 to {ah::page::%player%}
+			ahOpen(player)
+
+		else if {_slot} is 48:
+			set {ah::searching::%player%} to true
+			close player's inventory
+			wait 1 tick
+			set {_signblock} to block at (location of player)
+			make player see {_signblock} as oak sign
+			open virtual sign gui of (location of {_signblock}) to player
+
+		else if {_slot} is 49:
+			ahOpenMyAuctions(player)
+
+		else if {_slot} < 45:
+			set {_id} to {ah::slotmap::%player%::%{_slot}%}
+			if {_id} is not set:
+				stop
+			if {ah::item::%{_id}%} is not set:
+				ahOpen(player)
+				stop
+
+			if {ah::deletemode::%player%} is true:
+				set {_click} to "%click type%"
+				if {_click} contains "shift":
+					set {_seller} to {ah::seller::%{_id}%}
+					ahRemove({_id})
+					send "<#18FF00>Deleted an auction of %{_seller}%." to player
+					ahOpen(player)
+			else if {ah::seller::%{_id}%} is "%player%":
+				ahRefund(player, {_id})
+				ahOpen(player)
+			else if {ah::quickbuy::%player%} is true:
+				ahBuy(player, {_id})
+				ahOpen(player)
+			else:
+				ahOpenConfirm(player, {_id})
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>My Auctions":
+		cancel event
+		if name of event-inventory is not "<#FFE700>My Auctions":
+			stop
+		set {_slot} to index of event-slot
+
+		if {_slot} is 49:
+			ahOpen(player)
+
+		else if {_slot} < 45:
+			set {_id} to {ah::myslotmap::%player%::%{_slot}%}
+			if {_id} is set:
+				if {ah::item::%{_id}%} is set:
+					ahRefund(player, {_id})
+				ahOpenMyAuctions(player)
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Confirm Purchase":
+		cancel event
+		if name of event-inventory is not "<#FFE700>Confirm Purchase":
+			stop
+		set {_slot} to index of event-slot
+
+		if {_slot} is 11:
+			if {ah::pendingid::%player%} is set:
+				ahBuy(player, {ah::pendingid::%player%})
+			delete {ah::pendingid::%player%}
+			ahOpen(player)
+
+		else if {_slot} is 15:
+			delete {ah::pendingid::%player%}
+			ahOpen(player)
+
+on inventory drag:
+	set {_title} to name of player's current inventory
+	if {_title} is "<#FFE700>Auction House" or "<#FFE700>My Auctions" or "<#FFE700>Confirm Purchase":
+		cancel event
+
+on unchecked sign change:
+	if {ah::searching::%player%} is true:
+		delete {ah::searching::%player%}
+		set {_signblock} to block at event-location
+		make player see {_signblock} as block data of {_signblock}
+
+		set {_text} to ""
+		loop event-text comps:
+			set {_line} to uncolored "%loop-value%"
+			if {_line} is not "":
+				if {_text} is "":
+					set {_text} to {_line}
+				else:
+					set {_text} to "%{_text}% %{_line}%"
+
+		if {_text} is "":
+			delete {ah::searchtext::%player%}
+		else:
+			set {ah::searchtext::%player%} to {_text}
+		set {ah::page::%player%} to 1
+		wait 1 tick
+		ahOpen(player)
+
+on quit:
+	delete {ah::searching::%player%}
+	delete {ah::pendingid::%player%}
+	delete {ah::deletemode::%player%}
