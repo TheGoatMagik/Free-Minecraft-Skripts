@@ -35,6 +35,8 @@ on block break:
 				if player has permission "set.spawn":
 					if player's gamemode is creative:
 						stop
+				if {enablebreak.%location of event-block%} is true:
+					stop
 				cancel event
 				send "<#FF0000>You can't break blocks at spawn!"
 		else if {spawnblocks::*} contains location of event-block:
@@ -64,7 +66,16 @@ on damage:
 				cancel event
 				send "<#FF0000>You can't attack players at spawn!" to attacker
 
+#======= Allows Farming Generators on your server =======
+command /spawnproteditor:
+	permission: set.spawn
+	trigger:
+		give player stone shovel named "<#FFE700>Spawnprotremover"
 
 
-
-
+on block break:
+	if name of player's tool is "<#FFE700>Spawnprotremover":
+		if player has permission "set.spawn":
+			set {enablebreak.%location of event-block%} to true
+			cancel event
+			send "<#18FF00>Removed Block from Blockbreakprotection."
