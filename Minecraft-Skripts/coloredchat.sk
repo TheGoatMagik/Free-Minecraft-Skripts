@@ -1,0 +1,11 @@
+#======= A very very simple script that lets you use Hex-Codes or the Minecraft & Codes to use colors in your chat messages (coloredchat.use) =======
+#======= To not use Colors in a message start the message with "!" =======
+on chat:
+	if player has permission "coloredchat.use":
+		if message starts with "!":
+			set {_msg} to message
+			set {_newmsg} to sub text of {_msg} from character 2 to length of {_msg}
+			set message to uncolored {_newmsg}
+			stop
+		else:
+			set message to colored message
