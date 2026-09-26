@@ -1,4 +1,5 @@
 #======= AH Script that lets you sell and buy items. Features: Quickbuy, Search, Deleteauctions (Admin)... =======
+#======= This script uses the function from the scoreboard script, please remove the lines 110 and 114 if you dont have that. =======
 options:
 	maxauctions: 45
 
