@@ -124,8 +124,12 @@ on right click:
 					make 20 of explosion particle at {_particleloc} with extra 0.2
 					play sound "entity.player.levelup" with volume 1 and pitch 1 at {_loc} for player
 					if metadata tag "IsOpeningCrate" of player is true:
-						set {_reward} to slot 13 of {_c}
-						give player {_reward}
+						set {_item} to slot 13 of {_c}
+						give player {_item}
+						if display name of {_item} is set:
+							set {_reward} to display name of {_item}
+						else:
+							set {_reward} to {_item}
 						send "<#18FF00>You received %{_reward}%!" to player
 						delete metadata tag "IsOpeningCrate" of player
 						delete metadata tag "ActiveCrateInventory" of player
@@ -141,8 +145,12 @@ on right click:
 on inventory close:
 	if metadata tag "IsOpeningCrate" of player is true:
 		if name of event-inventory is metadata tag "ActiveCrateInventory" of player:
-			set {_reward} to slot 13 of event-inventory
-			give player {_reward}
+			set {_item} to slot 13 of event-inventory
+			give player {_item}
+			if display name of {_item} is set:
+				set {_reward} to display name of {_item}
+			else:
+				set {_reward} to {_item}
 			play sound "entity.player.levelup" with volume 1 and pitch 1.2 at player for player
 			send "<#18FF00>You received %{_reward}%!" to player
 			delete metadata tag "IsOpeningCrate" of player
@@ -268,7 +276,6 @@ on inventory close:
 			add 1 to {_slot}
 		send "<#18FF00>Lootpool has been saved successfully!" to player
 		delete metadata tag "CurrentCrate" of player
-
 
 
 
