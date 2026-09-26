@@ -4,6 +4,8 @@ command /spawndummy:
 	trigger:
 		set {_nbt} to nbt compound from "{NoGravity:1b}"
 		spawn 1 armor stand at player's location with nbt {_nbt}
+		set max health of last spawned armor stand to 1024
+		set health of last spawned armor stand to 1024
 		set metadata tag "CustomArmorStand" of last spawned armor stand to true
 		send "<#18FF00>Succesfully spawned a dummy!"
         
@@ -20,5 +22,4 @@ command /removedummy:
             
 on damage of armor stand:
 	if metadata tag "CustomArmorStand" of victim is true:
-		set max health of victim to 1024
 		set health of victim to 1024
