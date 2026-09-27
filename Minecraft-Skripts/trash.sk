@@ -1,0 +1,39 @@
+#======= Simple Script, that lets you delete Items very quickly =======
+command /trash:
+	trigger:
+		set {_trash} to new chest inventory with 6 rows named "<#FF0000>Trash"
+		set {_slot} to 45
+		loop 9 times:
+			set slot {_slot} of {_trash} to gray stained glass pane named ""
+			add 1 to {_slot}
+		set slot 49 of {_trash} to lime dye named "<#18FF00>Confirm" with lore "<#FFE700>Shiftclick to delete all Items - Escape to cancel"
+		open {_trash} to player
+
+on inventory click:
+	if name of event-inventory is "<#FF0000>Trash":
+		if index of event-slot >= 45:
+			cancel event
+		if index of event-slot = 49:
+			cancel event
+			set {_click} to "%click type%"
+			if {_click} contains "shift":
+				set {_slot} to 0
+				loop 54 times:
+					set slot {_slot} of event-inventory to air
+					add 1 to {_slot}
+				close player's inventory
+				send "<#18FF00>Deleted all Items"
+			else:
+				send "<#FF0000>You have to shiftclick to confirm!"
+
+on inventory close:
+	if name of event-inventory is "<#FF0000>Trash":
+		set {_slot} to 0
+		loop 45 times:
+			if slot {_slot} of event-inventory is not air:
+				set {_item} to slot {_slot} of event-inventory
+				if player has space for {_item}:
+					give {_item} to player
+				else:
+					drop {_item} at location of player
+			add 1 to {_slot}
