@@ -216,6 +216,8 @@ on inventory click:
 		else if index of event-slot is 15:
 			delete {crate::%{_loc}%::exists}
 			delete {crate::%{_loc}%::name}
+			set {_clean} to {crate::%{_loc}%::key::clean}
+			delete {crate_key_list::%{_clean}%}
 			delete {crate::%{_loc}%::key::*}
 			delete {crate::%{_loc}%::lootpool::*}
 			send "<#FF0000>Crate has been deleted."
@@ -276,14 +278,3 @@ on inventory close:
 			add 1 to {_slot}
 		send "<#18FF00>Lootpool has been saved successfully!" to player
 		delete metadata tag "CurrentCrate" of player
-
-
-
-
-
-
-
-
-
-
-
