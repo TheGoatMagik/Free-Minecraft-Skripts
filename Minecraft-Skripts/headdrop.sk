@@ -4,7 +4,10 @@ on death:
 		set {_p} to victim
 		if attacker exists:
 			set {_k} to name of attacker
-			set {_tool} to tool of attacker
+			if name of attacker's tool is set:
+				set {_tool} to name of attacker's tool
+			else:
+				set {_tool} to attacker's tool
 		else:
 			set {_k} to "Environment"
 		set {Date} to now formatted as "dd.MM.yy"
