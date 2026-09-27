@@ -82,16 +82,27 @@ command /tpaccept [<player>]:
 			
 			send actionbar "<#18FF00>Accepted TPA-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
 			
-			set {_loc} to location of {_sender}
-			send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_receiver}% <#FFE300>in 5 seconds, don't move!" to {_sender}
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
+			wait 1 second
 			loop 5 times:
-				if {_loc} = location of {_sender}:
-					send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_sender}
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
-					send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_sender}
+					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
 			teleport {_sender} to {_receiver}
 			stop
@@ -105,16 +116,27 @@ command /tpaccept [<player>]:
 			
 			send actionbar "<#18FF00>Accepted TPAHere-Request from <#FFE300>%{_sender}%<#18FF00>!" to {_receiver}
 			
-			set {_loc} to location of {_receiver}
-			send actionbar "<#FFE300>You will be teleported to <#18FF00>%{_sender}% <#FFE300>in 5 seconds, don't move!" to {_receiver}
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
+			wait 1 second
 			loop 5 times:
-				if {_loc} = location of {_receiver}:
-					send actionbar "<#FFE300>You will be teleported in<#18FF00> %{_number}%<#FFE300> seconds" to {_receiver}
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
-					send actionbar "<#FF0000>You moved! Teleport cancelled!" to {_receiver}
+					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
 			teleport {_receiver} to {_sender}
 			stop
