@@ -15,14 +15,25 @@ command /warp <text>:
 	trigger:
 		set {_warp} to arg-1
 		if {warp::list::%{_warp}%} is set:
-			set {_loc} to location of player
-			send actionbar "<#18FF00>You will be teleported to %{warp::displayname::%{_warp}%}% in 5 seconds, don't move!"
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
+			wait 1 second
 			loop 5 times:
-				if {_loc} = location of player:
-					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
@@ -61,14 +72,25 @@ on inventory click:
 		if event-item is ender eye:
 			set {_warp} to uncolored name of event-item
 			close player's inventory
-			set {_loc} to location of player
-			send actionbar "<#18FF00>You will be teleported to %{_warp}% in 5 seconds, don't move!"
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
+			wait 1 second
 			loop 5 times:
-				if {_loc} = location of player:
-					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
