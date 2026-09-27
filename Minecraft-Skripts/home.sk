@@ -3,15 +3,25 @@ command /home <integer>:
 		set {_home} to arg-1
 		if {home.%player%.%{_home}%} is set:
 
-			set {_loc} to location of player
-			send actionbar "<#18FF00>You will be teleported to Home %{_home}% in 5 seconds, don't move!"
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
 			wait 1 second
 			loop 5 times:
-				if {_loc} = location of player:
-					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
@@ -56,15 +66,25 @@ on inventory click:
 					set {_clicked} to {_slot} - 9
 					stop loop
 			close player's inventory
-			set {_loc} to location of player
-			send actionbar "<#18FF00>You will be teleported to Home %{_clicked}% in 5 seconds, don't move!"
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to spawn in 5 seconds, don't move!"
 			set {_number} to 5
 			wait 1 second
 			loop 5 times:
-				if {_loc} = location of player:
-					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
-					remove 1 from {_number}
-					wait 1 second
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
 				else:
 					send "<#FF0000>You moved! Teleport cancelled!"
 					stop
