@@ -1,0 +1,29 @@
+#======= This Command lets you remove specific enchantments from your tool. Use /unenchant <enchantment> <level> <receive enchanted book (yes/no)> =======
+command /unenchant <enchantment> <integer> [<boolean>]:
+	permission: unenchant.use
+	trigger:
+		set {_tool} to player's tool
+		if {_tool} is air:
+			send "<#FF0000>You must hold an item in your hand!"
+			stop
+		set {_level} to level of arg-1 on {_tool}
+		if {_level} is 0:
+			send "<#FF0000>Couldn't find %arg-1% on this item!"
+			stop
+		if {_level} is not arg-2:
+			send "<#FF0000>%arg-1% is level %{_currentLevel}%, not level %arg-2%!"
+			stop
+		delete {_enchants::*}
+		loop enchantments of {_tool}:
+			if loop-value is not arg-1:
+				add loop-value to {_enchants::*}
+		disenchant {_tool}
+		loop {_enchants::*}:
+			enchant {_tool} with loop-value
+		set player's tool to {_tool}
+		send "<#18FF00>Removed %arg-1% %arg-2% from your tool!"
+		if arg-3 is true:
+			set {_book} to minecraft:enchanted_book
+			set {_enchant} to "%arg-1% %arg-2%" parsed as enchantment type
+			add {_enchant} to stored enchantments of {_book}
+			give {_book} to player
