@@ -79,3 +79,20 @@ on inventory click:
 				send "<#18FF00>You've been teleported to %{_warp}%!" to player
 				send "" to player
 				send actionbar "<#18FF00>Teleported!"
+
+command /delwarp <text>:
+	permission: delwarp.use
+	trigger:
+		set {_warp} to arg-1
+		if {warp::list::%{_warp}%} is set:
+			delete {warp::list::%{_warp}%}
+			delete {warp::displayname::%{_warp}%}
+			send actionbar "<#18FF00>Warp %arg-1% has been successfully deleted!" to player
+		else:
+			send "<#FF0000>That warp doesn't exist!" to player
+
+on tab complete of "/warp" and "/delwarp":
+	loop {warp::list::*}:
+		set {_name} to {warp::displayname::%loop-index%}
+		add {_name} to {_completions::*}
+	set tab completions for position 1 to {_completions::*}
