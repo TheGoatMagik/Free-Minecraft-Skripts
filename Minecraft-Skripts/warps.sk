@@ -1,0 +1,81 @@
+#======= This script lets Admins set Warps, where all players can teleport to =======
+command /setwarp <text>:
+	permission: setwarp.use
+	trigger:
+		set {_warp} to arg-1
+		if size of {warp::list::*} >= 28:
+			if {warp::list::%{_warp}%} is not set:
+				send "<#FF0000>Warp hasn't been set: Maximum limit of 28 warps has been reached!" to player
+				stop		
+		set {warp::list::%{_warp}%} to location of player
+		set {warp::displayname::%{_warp}%} to arg-1
+		send actionbar "<#18FF00>Warp %arg-1% set to your current location!"
+
+command /warp <text>:
+	trigger:
+		set {_warp} to arg-1
+		if {warp::list::%{_warp}%} is set:
+			set {_loc} to location of player
+			send actionbar "<#18FF00>You will be teleported to %{warp::displayname::%{_warp}%}% in 5 seconds, don't move!"
+			set {_number} to 5
+			loop 5 times:
+				if {_loc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+			
+			if {_loc} = location of player:
+				teleport player to {warp::list::%{_warp}%}
+				send "" to player
+				send "<#18FF00>You've been teleported to %{warp::displayname::%{_warp}%}%!" to player
+				send "" to player
+		else:
+			send "<#FF0000>That Warp doesn't exist!"
+
+command /warps:
+	trigger:
+		set {_warps} to new chest inventory with 6 rows named "<#FFE700>Warps"
+		loop 54 times:
+			set {_s} to loop-number - 1
+			if {_s} < 9:
+				set slot {_s} of {_warps} to gray stained glass pane named ""
+			else if {_s} > 44:
+				set slot {_s} of {_warps} to gray stained glass pane named ""
+			else if mod({_s}, 9) is 0 or 8:
+				set slot {_s} of {_warps} to gray stained glass pane named ""
+		set {_slot} to 10
+		loop {warp::list::*}:
+			if mod({_slot}, 9) is 8:
+				add 2 to {_slot}	
+			set {_name} to {warp::displayname::%loop-index%}
+			set slot {_slot} of {_warps} to ender eye named "<#FFE300>%{_name}%"
+			add 1 to {_slot}
+		open {_warps} to player
+
+on inventory click:
+	if name of event-inventory is "<#FFE700>Warps":
+		cancel event
+		if event-item is ender eye:
+			set {_warp} to uncolored name of event-item
+			close player's inventory
+			set {_loc} to location of player
+			send actionbar "<#18FF00>You will be teleported to %{_warp}% in 5 seconds, don't move!"
+			set {_number} to 5
+			loop 5 times:
+				if {_loc} = location of player:
+					send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+					remove 1 from {_number}
+					wait 1 second
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+					
+			if {_loc} = location of player:
+				teleport player to {warp::list::%{_warp}%}
+				send "" to player
+				send "<#18FF00>You've been teleported to %{_warp}%!" to player
+				send "" to player
+				send actionbar "<#18FF00>Teleported!"
