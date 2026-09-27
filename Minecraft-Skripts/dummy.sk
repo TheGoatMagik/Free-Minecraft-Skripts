@@ -14,6 +14,7 @@ command /removedummy:
 	trigger:
 		set {_target} to targeted entity
 		if {_target} is an armor stand:
+			delete metadata tag "CustomArmorStand" of targeted entity
 			kill {_target}
 			send "<#18FF00>Dummy has been removed!"
 		else:
