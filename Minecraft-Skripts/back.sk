@@ -1,0 +1,41 @@
+#======= This script lets you teleport to your latest deathpoint =======
+on death:
+	if victim has permission "back.use":
+		set {latestdeath.%victim%} to location of victim
+	
+
+on quit:
+	if {latestdeath.%player%} is set:
+		delete {latestdeath.%player%}
+
+command /back:
+	permission: back.use
+	trigger:
+		if {latestdeath.%player%} is set:
+			set {_locx} to x-coordinate of player
+			set {_locy} to y-coordinate of player
+			set {_locz} to z-coordinate of player
+			send actionbar "<#18FF00>You will be teleported to your latest Death position in 5 seconds, don't move!"
+			set {_number} to 5
+			wait 1 second
+			loop 5 times:
+				if {_locx} = x-coordinate of player:
+					if {_locy} = y-coordinate of player:
+						if {_locz} = z-coordinate of player:
+							send actionbar "<#FFE300>You will be teleported in <#18FF00>%{_number}%<#FFE300> seconds!"
+							remove 1 from {_number}
+							wait 1 second
+						else:
+							send "<#FF0000>You moved! Teleport cancelled!"
+							stop
+					else:
+						send "<#FF0000>You moved! Teleport cancelled!"
+						stop
+				else:
+					send "<#FF0000>You moved! Teleport cancelled!"
+					stop
+			teleport player to {latestdeath.%player%}
+			send "<#18FF00>You've been teleported to your last death position!"
+			delete {latestdeath.%player%}
+		else:
+			send "<#FF0000>No Deathpoint set!"
