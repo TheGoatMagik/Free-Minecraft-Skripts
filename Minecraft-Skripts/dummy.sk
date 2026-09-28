@@ -27,7 +27,7 @@ on damage of armor stand:
 		set health of victim to 1024
 		set {_damage} to damage / 2
 		set {_damage} to rounded down {_damage}
-		send actionbar "<#18FF00>Dealt <#FFE700>%{_damage}% Hearts <#18FF00>of damage!" to attacker
+		send actionbar "<#18FF00>Dealt <#FFE700>%{_damage}% ❤ <#18FF00>of damage!" to attacker
 
 on death:
 	if metadata tag "CustomArmorStand" of victim is true:
