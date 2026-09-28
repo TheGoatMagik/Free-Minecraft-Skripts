@@ -20,7 +20,7 @@ on inventory close:
 				delete {oresclear::item::%{_slot}%}
 		send "<#18FF00>The Itempool has been saved. The given Items will be cleared." to player
 
-every 5 minutes:
+every 10 minutes:
 	broadcast "<#3A3A3A>[<#FFE700>Oresclear<#3A3A3A>] <#FF0000>Drops will be cleared in 5 minutes!"
 	wait 3 minutes
 	broadcast "<#3A3A3A>[<#FFE700>Oresclear<#3A3A3A>] <#FF0000>Drops will be cleared in 2 minutes!"
