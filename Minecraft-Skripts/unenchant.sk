@@ -11,7 +11,7 @@ command /unenchant <enchantment> <integer> [<boolean>]:
 			send "<#FF0000>Couldn't find %arg-1% on this item!"
 			stop
 		if {_level} is not arg-2:
-			send "<#FF0000>%arg-1% is level %{_currentLevel}%, not level %arg-2%!"
+			send "<#FF0000>%arg-1% is level %{_level}%, not level %arg-2%!"
 			stop
 		delete {_enchants::*}
 		loop enchantments of {_tool}:
