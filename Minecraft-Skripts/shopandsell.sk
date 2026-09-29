@@ -1,0 +1,432 @@
+#======= A script that adds a Shop and a Sell system. You can edit the Shop offers aswell as the Sellable Items at the bottom of the script (buy price, sellprice) =======
+function shopAdd(category: text, item: itemtype, buy: number, sell: number):
+	add 1 to {shop::%{_category}%::count}
+	set {_n} to {shop::%{_category}%::count}
+	set {shop::%{_category}%::item::%{_n}%} to {_item}
+	set {shop::%{_category}%::buy::%{_n}%} to {_buy}
+	set {shop::%{_category}%::sell::%{_n}%} to {_sell}
+	sellAdd({_item}, {_sell})
+
+function sellAdd(item: itemtype, sell: number):
+	add {_item} to {shop::allitems::*}
+	add {_sell} to {shop::allsell::*}
+
+function shopSellPrice(item: item) :: number:
+	loop {shop::allitems::*}:
+		if {_item} is loop-value:
+			return {shop::allsell::%loop-index%}
+	return 0
+
+function shopOpen(p: player):
+	set {_inv} to new chest inventory with 3 rows named "<#FFE700>Shop"
+	loop 27 times:
+		set slot (loop-number - 1) of {_inv} to gray stained glass pane named ""
+	set slot 10 of {_inv} to grass block named "<#FFE700>Blocks"
+	set slot 11 of {_inv} to oak sapling named "<#FFE700>Nature"
+	set slot 12 of {_inv} to diamond sword named "<#FFE700>PvP"
+	set slot 13 of {_inv} to redstone named "<#FFE700>Redstone"
+	set slot 14 of {_inv} to bread named "<#FFE700>Food"
+	set slot 15 of {_inv} to netherrack named "<#FFE700>Nether"
+	set slot 16 of {_inv} to end stone named "<#FFE700>End"
+	open {_inv} to {_p}
+
+function shopOpenCategory(p: player, category: text):
+	set {shop::category::%{_p}%} to {_category}
+	set {_inv} to new chest inventory with 4 rows named "<#FFE700>Shop - %{_category}%"
+	loop {shop::%{_category}%::count} times:
+		set {_n} to loop-number
+		set {_item} to {shop::%{_category}%::item::%{_n}%}
+		set {_buy} to {shop::%{_category}%::buy::%{_n}%}
+		set {_sell} to {shop::%{_category}%::sell::%{_n}%}
+		set lore of {_item} to "<#FFE700>Buy: %{_buy}% Money", "<#FFE700>Sell: %{_sell}% Money", "", "<#18FF00>Left-click: buy items" and "<#18FF00>Right-click: buy stacks"
+		set slot ({_n} - 1) of {_inv} to {_item}
+	loop 9 times:
+		set slot (loop-number + 26) of {_inv} to gray stained glass pane named ""
+	set slot 31 of {_inv} to arrow named "<#FFE700>Back"
+	open {_inv} to {_p}
+
+function shopOpenBuy(p: player):
+	set {_category} to {shop::category::%{_p}%}
+	set {_n} to {shop::number::%{_p}%}
+	set {_amount} to {shop::amount::%{_p}%}
+	set {_item} to {shop::%{_category}%::item::%{_n}%}
+	set {_price} to {shop::%{_category}%::buy::%{_n}%}
+
+	if {shop::stacks::%{_p}%} is true:
+		set {_total} to {_amount} * (max stack size of {_item})
+		set {_red} to red stained glass
+		set {_green} to lime stained glass
+		set {_unit} to "stacks"
+		set {_maxtext} to "<#18FF00>Maximum (36 stacks)"
+	else:
+		set {_total} to {_amount}
+		set {_red} to red stained glass pane
+		set {_green} to lime stained glass pane
+		set {_unit} to "items"
+		set {_maxtext} to "<#18FF00>Full stack"
+	set {_cost} to {_total} * {_price}
+	set {shop::total::%{_p}%} to {_total}
+	set {shop::cost::%{_p}%} to {_cost}
+
+	set {_show} to {_amount} of {_item}
+	set lore of {_show} to "<#FFE700>Amount: %{_amount}% %{_unit}%" and "<#FFE700>Price: %{_cost}% Money"
+
+	set {_inv} to new chest inventory with 3 rows named "<#FFE700>Buy"
+	loop 27 times:
+		set slot (loop-number - 1) of {_inv} to gray stained glass pane named ""
+	set slot 10 of {_inv} to {_red} named "<#FF0000>Reset to 1"
+	set slot 11 of {_inv} to {_red} named "<#FF0000>-10"
+	set slot 12 of {_inv} to {_red} named "<#FF0000>-1"
+	set slot 13 of {_inv} to {_show}
+	set slot 14 of {_inv} to {_green} named "<#18FF00>+1"
+	set slot 15 of {_inv} to {_green} named "<#18FF00>+10"
+	set slot 16 of {_inv} to {_green} named {_maxtext}
+	set slot 22 of {_inv} to lime dye named "<#18FF00>Confirm Purchase" with lore "<#FFE700>Price: %{_cost}% Money"
+	open {_inv} to {_p}
+
+command /shop:
+	trigger:
+		shopOpen(player)
+
+command /sell:
+	trigger:
+		set {_inv} to new chest inventory with 6 rows named "<#FFE700>Sell Items"
+		loop 9 times:
+			set slot (loop-number + 44) of {_inv} to gray stained glass pane named ""
+		set slot 49 of {_inv} to lime dye named "<#18FF00>Sell" with lore "<#FFE700>Shift-click to sell all items"
+		open {_inv} to player
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Shop":
+		cancel event
+		set {_slot} to index of event-slot
+		if name of event-inventory is not "<#FFE700>Shop":
+			stop
+		if {_slot} is 10:
+			shopOpenCategory(player, "Blocks")
+		else if {_slot} is 11:
+			shopOpenCategory(player, "Nature")
+		else if {_slot} is 12:
+			shopOpenCategory(player, "PvP")
+		else if {_slot} is 13:
+			shopOpenCategory(player, "Redstone")
+		else if {_slot} is 14:
+			shopOpenCategory(player, "Food")
+		else if {_slot} is 15:
+			shopOpenCategory(player, "Nether")
+		else if {_slot} is 16:
+			shopOpenCategory(player, "End")
+
+on inventory click:
+	if name of player's current inventory contains "Shop - ":
+		cancel event
+		set {_slot} to index of event-slot
+		if name of event-inventory doesn't contain "Shop - ":
+			stop
+		set {_category} to {shop::category::%player%}
+		set {_n} to {_slot} + 1
+		if {_slot} is 31:
+			shopOpen(player)
+		else if {shop::%{_category}%::item::%{_n}%} is set:
+			set {shop::number::%player%} to {_n}
+			set {shop::amount::%player%} to 1
+			set {_click} to "%click type%"
+			if {_click} contains "right":
+				set {shop::stacks::%player%} to true
+			else:
+				set {shop::stacks::%player%} to false
+			shopOpenBuy(player)
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Buy":
+		cancel event
+		set {_slot} to index of event-slot
+		if name of event-inventory is not "<#FFE700>Buy":
+			stop
+		set {_category} to {shop::category::%player%}
+		set {_n} to {shop::number::%player%}
+		set {_item} to {shop::%{_category}%::item::%{_n}%}
+		set {_amount} to {shop::amount::%player%}
+
+		if {_slot} is 22:
+			set {_cost} to {shop::cost::%player%}
+			set {_bought} to {shop::total::%player%} of {_item}
+			if {money.%player%} is not set:
+				set {money.%player%} to 0
+			if {money.%player%} < {_cost}:
+				send "<#FF0000>You don't have enough money!" to player
+			else if player doesn't have enough space for {_bought}:
+				send "<#FF0000>You don't have enough inventory space!" to player
+			else:
+				remove {_cost} from {money.%player%}
+				give {_bought} to player
+				send "<#18FF00>You bought %{_bought}% for %{_cost}% Money!" to player
+				reloadScoreboard(player)
+				shopOpenCategory(player, {_category})
+			stop
+
+		if {shop::stacks::%player%} is true:
+			set {_max} to 36
+		else:
+			set {_max} to max stack size of {_item}
+
+		if {_slot} is 10:
+			set {_amount} to 1
+		else if {_slot} is 11:
+			remove 10 from {_amount}
+		else if {_slot} is 12:
+			remove 1 from {_amount}
+		else if {_slot} is 14:
+			add 1 to {_amount}
+		else if {_slot} is 15:
+			add 10 to {_amount}
+		else if {_slot} is 16:
+			set {_amount} to {_max}
+		else:
+			stop
+
+		if {_amount} < 1:
+			set {_amount} to 1
+		if {_amount} > {_max}:
+			set {_amount} to {_max}
+		set {shop::amount::%player%} to {_amount}
+		shopOpenBuy(player)
+
+on inventory click:
+	if name of player's current inventory is "<#FFE700>Sell Items":
+		set {_slot} to index of event-slot
+		if name of event-inventory is not "<#FFE700>Sell Items":
+			stop
+		if {_slot} < 45:
+			stop
+		cancel event
+		set {_click} to "%click type%"
+		if {_slot} is 49:
+			if {_click} contains "shift":
+				set {_total} to 0
+				loop 45 times:
+					set {_item} to slot (loop-number - 1) of event-inventory
+					if {_item} is set:
+						if {_item} is not air:
+							set {_price} to shopSellPrice({_item})
+							if {_price} > 0:
+								add {_price} * (item amount of {_item}) to {_total}
+								set slot (loop-number - 1) of event-inventory to air
+				if {_total} > 0:
+					add {_total} to {money.%player%}
+					send "<#18FF00>You sold your items for %{_total}% Money!" to player
+					reloadScoreboard(player)
+				else:
+					send "<#FF0000>None of these items can be sold!" to player
+				close player's inventory
+
+on inventory close:
+	if name of event-inventory is "<#FFE700>Sell Items":
+		loop 45 times:
+			set {_item} to slot (loop-number - 1) of event-inventory
+			if {_item} is set:
+				if {_item} is not air:
+					set slot (loop-number - 1) of event-inventory to air
+					if player has enough space for {_item}:
+						give {_item} to player
+					else:
+						drop {_item} at player
+
+on inventory drag:
+	set {_title} to name of player's current inventory
+	if {_title} is "<#FFE700>Shop" or "<#FFE700>Buy":
+		cancel event
+	if {_title} contains "Shop - ":
+		cancel event
+
+on load:
+	delete {shop::*}
+
+	shopAdd("Blocks", oak log, 20, 8)
+	shopAdd("Blocks", spruce log, 20, 8)
+	shopAdd("Blocks", birch log, 20, 8)
+	shopAdd("Blocks", jungle log, 20, 8)
+	shopAdd("Blocks", acacia log, 20, 8)
+	shopAdd("Blocks", dark oak log, 20, 8)
+	shopAdd("Blocks", mangrove log, 20, 8)
+	shopAdd("Blocks", cherry log, 20, 8)
+	shopAdd("Blocks", pale oak log, 20, 8)
+	shopAdd("Blocks", stone, 10, 4)
+	shopAdd("Blocks", cobblestone, 5, 2)
+	shopAdd("Blocks", dirt, 5, 2)
+	shopAdd("Blocks", grass block, 15, 6)
+	shopAdd("Blocks", sand, 10, 4)
+	shopAdd("Blocks", gravel, 10, 4)
+	shopAdd("Blocks", stone bricks, 15, 6)
+	shopAdd("Blocks", bricks, 25, 10)
+	shopAdd("Blocks", glass, 15, 6)
+	shopAdd("Blocks", prismarine, 20, 8)
+	shopAdd("Blocks", dark prismarine, 20, 8)
+	shopAdd("Blocks", terracotta, 20, 8)
+	shopAdd("Blocks", white concrete, 25, 10)
+	shopAdd("Blocks", granite, 10, 4)
+	shopAdd("Blocks", diorite, 10, 4)
+	shopAdd("Blocks", andesite, 10, 4)
+	shopAdd("Blocks", tuff, 10, 4)
+	shopAdd("Blocks", deepslate, 10, 4)
+
+	shopAdd("Nature", oak leaves, 5, 2)
+	shopAdd("Nature", oak sapling, 30, 12)
+	shopAdd("Nature", wheat seeds, 5, 2)
+	shopAdd("Nature", wheat, 10, 4)
+	shopAdd("Nature", carrot, 10, 4)
+	shopAdd("Nature", potato, 10, 4)
+	shopAdd("Nature", sugar cane, 15, 6)
+	shopAdd("Nature", pumpkin, 20, 8)
+	shopAdd("Nature", melon slice, 5, 2)
+	shopAdd("Nature", cactus, 15, 6)
+	shopAdd("Nature", bone meal, 10, 4)
+	shopAdd("Nature", moss block, 20, 8)
+	shopAdd("Nature", kelp, 10, 4)
+
+	shopAdd("PvP", golden apple, 500, 200)
+	shopAdd("PvP", ender pearl, 150, 60)
+	shopAdd("PvP", wind charge, 50, 20)
+	shopAdd("PvP", arrow, 5, 2)
+	shopAdd("PvP", bow, 200, 80)
+	shopAdd("PvP", crossbow, 250, 100)
+	shopAdd("PvP", shield, 150, 60)
+	shopAdd("PvP", diamond sword, 1000, 400)
+	shopAdd("PvP", diamond axe, 1000, 400)
+	shopAdd("PvP", totem of undying, 5000, 2000)
+	shopAdd("PvP", water bucket, 200, 80)
+	shopAdd("PvP", lava bucket, 200, 80)
+	shopAdd("PvP", fishing rod, 250, 100)
+
+	shopAdd("Redstone", redstone, 10, 4)
+	shopAdd("Redstone", redstone block, 90, 36)
+	shopAdd("Redstone", redstone torch, 15, 6)
+	shopAdd("Redstone", repeater, 40, 16)
+	shopAdd("Redstone", comparator, 60, 24)
+	shopAdd("Redstone", piston, 60, 24)
+	shopAdd("Redstone", sticky piston, 100, 40)
+	shopAdd("Redstone", observer, 80, 32)
+	shopAdd("Redstone", hopper, 200, 80)
+	shopAdd("Redstone", dispenser, 80, 32)
+	shopAdd("Redstone", dropper, 60, 24)
+	shopAdd("Redstone", lever, 10, 4)
+	shopAdd("Redstone", stone button, 5, 2)
+	shopAdd("Redstone", redstone lamp, 60, 24)
+	shopAdd("Redstone", slime block, 400, 160)
+	shopAdd("Redstone", honey block, 200, 80)
+	shopAdd("Redstone", note block, 40, 15)
+	shopAdd("Redstone", minecart, 100, 30)
+	shopAdd("Redstone", minecart with hopper, 120, 35)
+	shopAdd("Redstone", rail, 40, 15)
+	shopAdd("Redstone", powered rail, 60, 25)
+	shopAdd("Redstone", daylight detector, 50, 20)
+	shopAdd("Redstone", waxed copper bulb, 100, 40)
+
+	shopAdd("Food", bread, 10, 4)
+	shopAdd("Food", apple, 10, 4)
+	shopAdd("Food", cooked beef, 15, 6)
+	shopAdd("Food", cooked porkchop, 15, 6)
+	shopAdd("Food", cooked chicken, 12, 5)
+	shopAdd("Food", cooked mutton, 12, 5)
+	shopAdd("Food", cooked salmon, 12, 5)
+	shopAdd("Food", cooked cod, 10, 4)
+	shopAdd("Food", baked potato, 10, 4)
+	shopAdd("Food", sweet berries, 5, 2)
+	shopAdd("Food", cookie, 5, 2)
+	shopAdd("Food", pumpkin pie, 20, 8)
+	shopAdd("Food", mushroom stew, 20, 8)
+	shopAdd("Food", cake, 50, 20)
+	shopAdd("Food", golden carrot, 60, 24)
+
+	shopAdd("Nether", netherrack, 5, 2)
+	shopAdd("Nether", soul sand, 15, 6)
+	shopAdd("Nether", soul soil, 15, 6)
+	shopAdd("Nether", basalt, 10, 4)
+	shopAdd("Nether", blackstone, 10, 4)
+	shopAdd("Nether", nether bricks, 20, 8)
+	shopAdd("Nether", glowstone, 40, 16)
+	shopAdd("Nether", magma block, 30, 12)
+	shopAdd("Nether", crimson stem, 25, 10)
+	shopAdd("Nether", warped stem, 25, 10)
+	shopAdd("Nether", quartz, 20, 8)
+	shopAdd("Nether", nether wart, 20, 8)
+	shopAdd("Nether", blaze rod, 100, 40)
+	shopAdd("Nether", ghast tear, 200, 80)
+	shopAdd("Nether", magma cream, 50, 20)
+
+	shopAdd("End", end stone, 15, 6)
+	shopAdd("End", end stone bricks, 20, 8)
+	shopAdd("End", purpur block, 30, 12)
+	shopAdd("End", obsidian, 50, 20)
+	shopAdd("End", chorus fruit, 20, 8)
+	shopAdd("End", end rod, 50, 20)
+	shopAdd("End", ender chest, 500, 200)
+	shopAdd("End", shulker shell, 1000, 400)
+
+	sellAdd(coal, 8)
+	sellAdd(charcoal, 6)
+	sellAdd(raw copper, 8)
+	sellAdd(copper ingot, 12)
+	sellAdd(raw iron, 15)
+	sellAdd(iron ingot, 20)
+	sellAdd(raw gold, 25)
+	sellAdd(gold ingot, 32)
+	sellAdd(lapis lazuli, 8)
+	sellAdd(amethyst shard, 10)
+	sellAdd(emerald, 80)
+	sellAdd(diamond, 160)
+	sellAdd(ancient debris, 700)
+	sellAdd(netherite scrap, 800)
+	sellAdd(netherite ingot, 3500)
+	sellAdd(coal ore, 10)
+	sellAdd(copper ore, 10)
+	sellAdd(iron ore, 18)
+	sellAdd(gold ore, 28)
+	sellAdd(lapis ore, 30)
+	sellAdd(redstone ore, 25)
+	sellAdd(emerald ore, 90)
+	sellAdd(diamond ore, 170)
+	sellAdd(deepslate iron ore, 18)
+	sellAdd(deepslate gold ore, 28)
+	sellAdd(deepslate diamond ore, 170)
+	sellAdd(nether gold ore, 20)
+	sellAdd(nether quartz ore, 15)
+	sellAdd(iron block, 180)
+	sellAdd(gold block, 288)
+	sellAdd(emerald block, 720)
+	sellAdd(diamond block, 1440)
+	sellAdd(rotten flesh, 1)
+	sellAdd(bone, 3)
+	sellAdd(string, 3)
+	sellAdd(spider eye, 4)
+	sellAdd(gunpowder, 8)
+	sellAdd(leather, 6)
+	sellAdd(feather, 2)
+	sellAdd(ink sac, 4)
+	sellAdd(rabbit hide, 4)
+	sellAdd(phantom membrane, 20)
+	sellAdd(egg, 2)
+	sellAdd(honeycomb, 6)
+	sellAdd(beef, 4)
+	sellAdd(porkchop, 4)
+	sellAdd(chicken, 3)
+	sellAdd(mutton, 3)
+	sellAdd(cod, 3)
+	sellAdd(salmon, 3)
+	sellAdd(beetroot, 3)
+	sellAdd(melon, 10)
+	sellAdd(brown mushroom, 3)
+	sellAdd(red mushroom, 3)
+	sellAdd(cocoa beans, 3)
+	sellAdd(kelp, 1)
+	sellAdd(bamboo, 1)
+	sellAdd(jungle log, 8)
+	sellAdd(acacia log, 8)
+	sellAdd(dark oak log, 8)
+	sellAdd(mangrove log, 8)
+	sellAdd(cherry log, 8)
+	sellAdd(flint, 3)
+	sellAdd(clay ball, 2)
+	sellAdd(snowball, 1)
+	sellAdd(prismarine shard, 5)
+	sellAdd(nautilus shell, 50)
