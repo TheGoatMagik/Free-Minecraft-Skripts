@@ -70,5 +70,26 @@ command /pay <player> <integer>:
 		reloadScoreboard(player)
 		reloadScoreboard(arg-1)
 
-
+command /stats [<player>]:
+	aliases: info
+	permission: stats.use
+	trigger:
+		if arg-1 is set:
+			send ""
+			send "<#FFE700>Stats of <#18FF00>%arg-1%:"
+			send ""
+			send formatted "<#38FF12>⚔ Kills: <#FFE700>%{kills.%arg-1%}%"
+			send formatted "<#E60000>☠ Deaths: <#FFE700>%{deaths.%arg-1%}%"
+			send formatted "<#00C6E6>⏰ Playtime: <#FFE700>%{playtimedays.%arg-1%}%d %{playtimehours.%arg-1%}%h %{playtimeminutes.%arg-1%}%m"
+			send formatted "<#FFE700>💰 Money: <#FFE700>%{money.%arg-1%}%"
+			send ""
+		else:
+			send ""
+			send formatted "<#FFE700>Your Stats:"
+			send ""
+			send formatted "<#38FF12>⚔ Kills: <#FFE700>%{kills.%player%}%"
+			send formatted "<#E60000>☠ Deaths: <#FFE700>%{deaths.%player%}%"
+			send formatted "<#00C6E6>⏰ Playtime: <#FFE700>%{playtimedays.%player%}%d %{playtimehours.%player%}%h %{playtimeminutes.%player%}%m"
+			send formatted "<#FFE700>💰 Money: <#FFE700>%{money.%player%}%"
+			send ""
 
