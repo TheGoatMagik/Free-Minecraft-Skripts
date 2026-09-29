@@ -41,9 +41,3 @@ command /seemaxhealth <player>:
 	trigger:
 		set {_amount} to max health of arg-1
 		send "<#FFE300>%arg-1%'s max health is <#18FF00>%{_amount}% <#FFE300>."
-
-command /seemaxhealth <player>:
-    permission: see.maxhealth
-    trigger:
-        set {_amount} to max health of arg-1
-        send "<#FFE300>%arg-1%'s max health is <#18FF00>%{_amount}% <#FFE300>."
