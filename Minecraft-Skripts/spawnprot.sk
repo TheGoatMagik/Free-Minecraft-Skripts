@@ -76,6 +76,11 @@ command /spawnproteditor:
 on block break:
 	if name of player's tool is "<#FFE700>Spawnprotremover":
 		if player has permission "set.spawn":
-			set {enablebreak.%location of event-block%} to true
 			cancel event
-			send "<#18FF00>Removed Block from Blockbreakprotection."
+			if {enablebreak.%location of event-block%} is not true:
+				set {enablebreak.%location of event-block%} to true
+				send "<#18FF00>Removed Block from Blockbreakprotection."
+			else:
+				set {enablebreak.%location of event-block%} to false
+				send "<#18FF00>Added Block to Blockbreakprotection."
+				
