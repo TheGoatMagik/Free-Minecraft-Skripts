@@ -1,0 +1,5 @@
+#======= A very simple death message script =======
+on death:
+	if victim is a player:
+		if attacker is a player:
+			set death message to formatted "<#FF0000>☠ %victim% <#FFFFFF>was killed by <#FF0000>%attacker% ☠"
