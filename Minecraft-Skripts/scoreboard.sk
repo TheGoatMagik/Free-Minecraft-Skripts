@@ -2,6 +2,10 @@
 options:
 	discord: discord.gg/xyz
 
+command /reloadscb:
+	trigger:
+		reloadScoreboard(player)
+
 function reloadScoreboard(p: player):
 	if {kills.%{_p}%} is not set:
 		set {kills.%{_p}%} to 0
@@ -13,16 +17,22 @@ function reloadScoreboard(p: player):
 		set {playtimehours.%{_p}%} to 0
 	if {playtimeminutes.%{_p}%} is not set:
 		set {playtimeminutes.%{_p}%} to 0
+	if {killstreak.%{_p}%} is not set:
+		set {killstreak.%{_p}%} to 0
 	if {money.%{_p}%} is not set:
 		set {money.%{_p}%} to 0
-	set title of {_p}'s fastboard to "My Scoreboard"
+	set title of {_p}'s fastboard to "&#E6CD00ᴍ&#E8D110ʏ &#ECDA2Fꜱ&#EEDE3Fᴄ&#F0E24Fᴏ&#F2E65Fʀ&#F4EA6Eᴇ&#F6EE7Eʙ&#F8F38Eᴏ&#FAF79Eᴀ&#FCFBADʀ&#FEFFBDᴅ"
 	set line 1 of {_p}'s fastboard to ""
-	set line 2 of {_p}'s fastboard to formatted "<#38FF12>⚔ Kills: <#FFDD00>%{kills.%{_p}%}%"
-	set line 3 of {_p}'s fastboard to formatted "<#E60000>☠ Deaths: <#FFDD00>%{deaths.%{_p}%}%"
-	set line 4 of {_p}'s fastboard to formatted "<#00C6E6>⏰ Playtime: <#FFDD00>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
-	set line 5 of {_p}'s fastboard to formatted "<#FFE700>💰 Money: <#FFDD00>%{money.%{_p}%}%"
-	set line 6 of {_p}'s fastboard to formatted "<#5865F2>📢 Discord: {@discord}"
-	set line 7 of {_p}'s fastboard to ""
+	set line 2 of {_p}'s fastboard to formatted "<#FFE700>👤 ᴘ<#FFEA20>ʟ<#FFED40>ᴀ<#FFF060>ʏ<#FFF380>ᴇ<#FFF69F>ʀ<#FFF9BF>ꜱ <#FFFFFF>» <#FFE700>%number of all players%"
+	set line 3 of {_p}'s fastboard to formatted "<#00C6E6>⏳ ᴘ<#1CCCE9>ʟ<#39D3EC>ᴀ<#55D9EE>ʏ<#71DFF1>ᴛ<#8EE6F4>ɪ<#AAECF7>ᴍ<#C6F2F9>ᴇ <#FFFFFF>» <#00C6E6>%{playtimedays.%{_p}%}%d %{playtimehours.%{_p}%}%h %{playtimeminutes.%{_p}%}%m"
+	set line 4 of {_p}'s fastboard to ""
+	set line 5 of {_p}'s fastboard to formatted "<#E6005D>🗡 ᴋ<#E8176C>ɪ<#EB2E7A>ʟ<#ED4689>ʟ<#EF5D98>ꜱ<#F174A7>ᴛ<#F48BB5>ʀ<#F6A2C4>ᴇ<#F8B9D3>ᴀ<#FAD1E2>ᴋ <#FFFFFF>» <#E6005D>%{killstreak.%{_p}%}%"
+	set line 6 of {_p}'s fastboard to formatted "<#E60000>⚔ ᴋ<#EA2B2B>ɪ<#EE5555>ʟ<#F38080>ʟ<#F7AAAA>ꜱ <#FFFFFF>» <#E60000>%{kills.%{_p}%}%"
+	set line 7 of {_p}'s fastboard to formatted "<#FF9100>☠ ᴅ<#FFA124>ᴇ<#FFB049>ᴀ<#FFC06D>ᴛ<#FFD092>ʜ<#FFE0B6>ꜱ <#FFFFFF>» <#FF9100>%{deaths.%{_p}%}%"
+	set line 8 of {_p}'s fastboard to ""
+	set line 9 of {_p}'s fastboard to formatted "<#E6CD00>💲 ᴍ<#EAD52B>ᴏ<#EEDE55>ɴ<#F3E680>ᴇ<#F7EEAA>ʏ <#FFFFFF>» <#E6CD00>%{money.%{_p}%}%"
+	set line 10 of {_p}'s fastboard to formatted "<#005AE6>💬 ᴅ<#206FE9>ɪ<#4083EC>ꜱ<#6098EF>ᴄ<#80ADF3>ᴏ<#9FC1F6>ʀ<#BFD6F9>ᴅ <#FFFFFF>» <#005AE6>{@discord}"
+	set line 11 of {_p}'s fastboard to ""
 #======= Load Scoreboard on join =======
 
 on join:
@@ -47,9 +57,11 @@ every 1 minute:
 on death:
 	if victim is a player:
 		add 1 to {deaths.%victim%}
+		set {killstreak.%victim%} to 0
 		reloadScoreboard(victim)
 		if attacker is a player:
 			add 1 to {kills.%attacker%}
+			add 1 to {killstreak.%attacker%}
 			reloadScoreboard(attacker)
 
 #======= Money System =======
@@ -70,6 +82,7 @@ command /pay <player> <integer>:
 		reloadScoreboard(player)
 		reloadScoreboard(arg-1)
 
+#======= Stats System =======
 command /stats [<player>]:
 	aliases: info
 	permission: stats.use
@@ -78,18 +91,23 @@ command /stats [<player>]:
 			send ""
 			send "<#FFE700>Stats of <#18FF00>%arg-1%:"
 			send ""
-			send formatted "<#38FF12>⚔ Kills: <#FFE700>%{kills.%arg-1%}%"
-			send formatted "<#E60000>☠ Deaths: <#FFE700>%{deaths.%arg-1%}%"
-			send formatted "<#00C6E6>⏰ Playtime: <#FFE700>%{playtimedays.%arg-1%}%d %{playtimehours.%arg-1%}%h %{playtimeminutes.%arg-1%}%m"
-			send formatted "<#FFE700>💰 Money: <#FFE700>%{money.%arg-1%}%"
+			send formatted "<#00C6E6>⏳ ᴘ<#1CCCE9>ʟ<#39D3EC>ᴀ<#55D9EE>ʏ<#71DFF1>ᴛ<#8EE6F4>ɪ<#AAECF7>ᴍ<#C6F2F9>ᴇ <#FFFFFF>» <#00C6E6>%{playtimedays.%arg-1%}%d %{playtimehours.%arg-1%}%h %{playtimeminutes.%arg-1%}%m"
+			send ""
+			send formatted "<#E6005D>🗡 ᴋ<#E8176C>ɪ<#EB2E7A>ʟ<#ED4689>ʟ<#EF5D98>ꜱ<#F174A7>ᴛ<#F48BB5>ʀ<#F6A2C4>ᴇ<#F8B9D3>ᴀ<#FAD1E2>ᴋ <#FFFFFF>» <#E6005D>%{killstreak.%arg-1%}%"
+			send formatted "<#E60000>⚔ ᴋ<#EA2B2B>ɪ<#EE5555>ʟ<#F38080>ʟ<#F7AAAA>ꜱ <#FFFFFF>» <#E60000>%{kills.%arg-1%}%"
+			send formatted "<#FF9100>☠ ᴅ<#FFA124>ᴇ<#FFB049>ᴀ<#FFC06D>ᴛ<#FFD092>ʜ<#FFE0B6>ꜱ <#FFFFFF>» <#FF9100>%{deaths.%arg-1%}%"
+			send ""
+			send formatted "<#E6CD00>💲 ᴍ<#EAD52B>ᴏ<#EEDE55>ɴ<#F3E680>ᴇ<#F7EEAA>ʏ <#FFFFFF>» <#E6CD00>%{money.%arg-1%}%"
 			send ""
 		else:
 			send ""
-			send formatted "<#FFE700>Your Stats:"
+			send "<#FFE700>Your Stats:"
 			send ""
-			send formatted "<#38FF12>⚔ Kills: <#FFE700>%{kills.%player%}%"
-			send formatted "<#E60000>☠ Deaths: <#FFE700>%{deaths.%player%}%"
-			send formatted "<#00C6E6>⏰ Playtime: <#FFE700>%{playtimedays.%player%}%d %{playtimehours.%player%}%h %{playtimeminutes.%player%}%m"
-			send formatted "<#FFE700>💰 Money: <#FFE700>%{money.%player%}%"
+			send formatted "<#00C6E6>⏳ ᴘ<#1CCCE9>ʟ<#39D3EC>ᴀ<#55D9EE>ʏ<#71DFF1>ᴛ<#8EE6F4>ɪ<#AAECF7>ᴍ<#C6F2F9>ᴇ <#FFFFFF>» <#00C6E6>%{playtimedays.%player%}%d %{playtimehours.%player%}%h %{playtimeminutes.%player%}%m"
 			send ""
-
+			send formatted "<#E6005D>🗡 ᴋ<#E8176C>ɪ<#EB2E7A>ʟ<#ED4689>ʟ<#EF5D98>ꜱ<#F174A7>ᴛ<#F48BB5>ʀ<#F6A2C4>ᴇ<#F8B9D3>ᴀ<#FAD1E2>ᴋ <#FFFFFF>» <#E6005D>%{killstreak.%player%}%"
+			send formatted "<#E60000>⚔ ᴋ<#EA2B2B>ɪ<#EE5555>ʟ<#F38080>ʟ<#F7AAAA>ꜱ <#FFFFFF>» <#E60000>%{kills.%player%}%"
+			send formatted "<#FF9100>☠ ᴅ<#FFA124>ᴇ<#FFB049>ᴀ<#FFC06D>ᴛ<#FFD092>ʜ<#FFE0B6>ꜱ <#FFFFFF>» <#FF9100>%{deaths.%player%}%"
+			send ""
+			send formatted "<#E6CD00>💲 ᴍ<#EAD52B>ᴏ<#EEDE55>ɴ<#F3E680>ᴇ<#F7EEAA>ʏ <#FFFFFF>» <#E6CD00>%{money.%player%}%"
+			send ""
