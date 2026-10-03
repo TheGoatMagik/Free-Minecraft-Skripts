@@ -5,6 +5,8 @@ options:
 on damage:
 	if attacker is a player:
 		if victim is a player:
+			if victim is attacker:
+				stop
 			set {_vuuid} to uuid of victim
 			set {_auuid} to uuid of attacker
 			if {combat::*} contains {_vuuid}:
