@@ -1,0 +1,222 @@
+#======= A leaderboard script for Kills, Deaths, Killstreak, Playtime aswell as Money. Adds leaderboard functionality and /top... GUIs =======
+options:
+	kills-title: "<#E60000>ᴛ<#E91A1A>ᴏ<#EB3333>ᴘ <#F06666>ᴋ<#F38080>ɪ<#F59999>ʟ<#F8B3B3>ʟ<#FACCCC>ꜱ <#FFFFFF>»"
+	deaths-title: "<#FF9100>ᴛ<#FF9B17>ᴏ<#FFA52E>ᴘ <#FFB95D>ᴅ<#FFC374>ᴇ<#FFCD8B>ᴀ<#FFD7A2>ᴛ<#FFE1B9>ʜ<#FFEBD1>ꜱ <#FFFFFF>»"
+	killstreak-title: "<#FF247C>ᴛ<#FF3385>ᴏ<#FF418D>ᴘ <#FF5E9F>ᴋ<#FF6DA8>ɪ<#FF7CB0>ʟ<#FF8AB9>ʟ<#FF99C2>ꜱ<#FFA7CB>ᴛ<#FFB6D3>ʀ<#FFC5DC>ᴇ<#FFD3E5>ᴀ<#FFE2EE>ᴋ <#FFFFFF>»"
+	playtime-title: "<#00C6E6>ᴛ<#14CAE8>ᴏ<#27CFEA>ᴘ <#4ED8EE>ᴘ<#62DCF0>ʟ<#76E0F2>ᴀ<#89E5F3>ʏ<#9DE9F5>ᴛ<#B1EDF7>ɪ<#C4F2F9>ᴍ<#D8F6FB>ᴇ <#FFFFFF>»"
+	money-title: "<#E6CD00>ᴛ<#E9D21A>ᴏ<#EBD733>ᴘ <#F0E166>ᴍ<#F3E680>ᴏ<#F5EB99>ɴ<#F8F0B3>ᴇ<#FAF5CC>ʏ <#FFFFFF>»"
+	update-time: 30 seconds
+	
+	kills-name: "<gradient:#E60000:#F7AAAA>"
+	kills-value: "<gradient:#E60000:#F7AAAA>"
+	deaths-name: "<gradient:#FF9100:#FFE0B6>"
+	deaths-value: "<gradient:#FF9100:#FFE0B6>"
+	killstreak-name: "<gradient:#E6005D:#FAD1E2>"
+	killstreak-value: "<gradient:#E6005D:#FAD1E2>"
+	playtime-name: "<gradient:#00C6E6:#C6F2F9>"
+	playtime-value: "<gradient:#00C6E6:#C6F2F9>"
+	money-name: "<gradient:#E6CD00:#F7EEAA>"
+	money-value: "<gradient:#E6CD00:#F7EEAA>"
+
+	update-time: 30 seconds
+
+on load:
+	set {lb::style::kills::title} to {@kills-title}
+	set {lb::style::kills::name} to {@kills-name}
+	set {lb::style::kills::value} to {@kills-value}
+	set {lb::style::deaths::title} to {@deaths-title}
+	set {lb::style::deaths::name} to {@deaths-name}
+	set {lb::style::deaths::value} to {@deaths-value}
+	set {lb::style::killstreak::title} to {@killstreak-title}
+	set {lb::style::killstreak::name} to {@killstreak-name}
+	set {lb::style::killstreak::value} to {@killstreak-value}
+	set {lb::style::playtime::title} to {@playtime-title}
+	set {lb::style::playtime::name} to {@playtime-name}
+	set {lb::style::playtime::value} to {@playtime-value}
+	set {lb::style::money::title} to {@money-title}
+	set {lb::style::money::name} to {@money-name}
+	set {lb::style::money::value} to {@money-value}
+
+function lbTitle(type: text) :: text:
+	return {lb::style::%{_type}%::title}
+
+function lbValue(type: text, name: text) :: text:
+	set {_value} to {lb::%{_type}%::%{_name}%}
+	if {_value} is not set:
+		set {_value} to 0
+	if {_type} is "money":
+		return "%{_value}% Money"
+	if {_type} is "playtime":
+		set {_days} to floor({_value} / 1440)
+		set {_hours} to floor(mod({_value}, 1440) / 60)
+		set {_minutes} to mod({_value}, 60)
+		return "%{_days}%d %{_hours}%h %{_minutes}%m"
+	return "%{_value}%"
+
+function lbName(key: text) :: text:
+	set {_name} to {lb::name::%{_key}%}
+	if {_name} is not set:
+		set {_name} to name of ({_key} parsed as offline player)
+	if {_name} is not set:
+		set {_name} to {_key}
+	return {_name}
+
+function lbSave(p: player):
+	set {lb::name::%{_p}%} to "%{_p}%"
+	set {lb::kills::%{_p}%} to {kills.%{_p}%}
+	set {lb::deaths::%{_p}%} to {deaths.%{_p}%}
+	set {lb::killstreak::%{_p}%} to {topkillstreak.%{_p}%}
+	set {lb::money::%{_p}%} to {money.%{_p}%}
+	set {_days} to {playtimedays.%{_p}%} otherwise 0
+	set {_hours} to {playtimehours.%{_p}%} otherwise 0
+	set {_minutes} to {playtimeminutes.%{_p}%} otherwise 0
+	set {lb::playtime::%{_p}%} to {_days} * 1440 + {_hours} * 60 + {_minutes}
+
+function lbLines(type: text, amount: number) :: texts:
+	add lbTitle({_type}) to {_lines::*}
+	set {_keys::*} to sorted indices of {lb::%{_type}%::*} in descending order
+	loop {_amount} times:
+		set {_key} to {_keys::%loop-number%}
+		if {_key} is set:
+			set {_name} to lbName({_key})
+			set {_value} to lbValue({_type}, {_key})
+			set {_namestyle} to {lb::style::%{_type}%::name}
+			set {_valuestyle} to {lb::style::%{_type}%::value}
+			add "<#FFE700>#%loop-number% %{_namestyle}%%{_name}%<reset> <#FFFFFF>» %{_valuestyle}%%{_value}%" to {_lines::*}
+		else:
+			add "<#FFE700>#%loop-number% <#AAAAAA>---" to {_lines::*}
+	return {_lines::*}
+
+function lbUpdate(id: text):
+	set {_location} to {lb::boardlocation::%{_id}%}
+	loop all text displays in radius 1 around {_location}:
+		if loop-entity has scoreboard tag "leaderboard%{_id}%":
+			set {_display} to loop-entity
+	if {_display} is not set:
+		spawn a text display at {_location}
+		set {_display} to last spawned entity
+		add "leaderboard%{_id}%" to scoreboard tags of {_display}
+		set line width of {_display} to 300
+		if {lb::boardfacing::%{_id}%} is "yes":
+			set billboard of {_display} to center
+		else:
+			set billboard of {_display} to fixed
+			set yaw of {_display} to {lb::boardyaw::%{_id}%}
+	set text of {_display} to lbLines({lb::boardtype::%{_id}%}, {lb::boardamount::%{_id}%})
+
+function lbHead(type: text, key: text, rank: text, name: text) :: item:
+	set {_value} to lbValue({_type}, {_key})
+	set {_namestyle} to {lb::style::%{_type}%::name}
+	set {_valuestyle} to {lb::style::%{_type}%::value}
+	set {_head} to player head named "<#FFE700>#%{_rank}% %{_namestyle}%%{_name}%" with lore "%{_valuestyle}%%{_value}%"
+	set skull owner of {_head} to {_name} parsed as offline player
+	return {_head}
+
+function lbOpenTop(p: player, type: text):
+	lbSave({_p})
+	set {_keys::*} to sorted indices of {lb::%{_type}%::*} in descending order
+	set {_inv} to new chest inventory with 1 row named lbTitle({_type})
+	loop 9 times:
+		set slot (loop-number - 1) of {_inv} to gray stained glass pane named ""
+	loop 5 times:
+		set {_key} to {_keys::%loop-number%}
+		if {_key} is set:
+			set {_name} to lbName({_key})
+			set slot loop-number of {_inv} to lbHead({_type}, {_key}, "%loop-number%", {_name})
+	set {_mykey} to "-"
+	set {_rank} to "-"
+	loop {_keys::*}:
+		if {lb::name::%loop-value%} is "%{_p}%":
+			set {_mykey} to loop-value
+			set {_rank} to loop-index
+	set slot 7 of {_inv} to lbHead({_type}, {_mykey}, {_rank}, "%{_p}%")
+	open {_inv} to {_p}
+
+command /createleaderboard <text> <integer> <text>:
+	permission: leaderboard.admin
+	permission message: <#FF0000>You don't have permission to do that!
+	usage: <#FF0000>/createleaderboard <kills|deaths|killstreak|playtime|money> <places> <yes|no>
+	trigger:
+		if lbTitle(arg-1) is not set:
+			send "<#FF0000>Unknown leaderboard! Use: kills, deaths, killstreak, playtime, money" to player
+			stop
+		if arg-2 < 1:
+			send "<#FF0000>The leaderboard needs at least 1 place!" to player
+			stop
+		if arg-3 is not "yes" or "no":
+			send "<#FF0000>Use yes or no for looking at the player!" to player
+			stop
+		add 1 to {lb::nextboard}
+		set {_id} to "%{lb::nextboard}%"
+		set {lb::boardlocation::%{_id}%} to location of player
+		set {lb::boardyaw::%{_id}%} to (yaw of player) + 180
+		set {lb::boardtype::%{_id}%} to arg-1
+		set {lb::boardamount::%{_id}%} to arg-2
+		set {lb::boardfacing::%{_id}%} to arg-3
+		lbUpdate({_id})
+		send "<#18FF00>Leaderboard created!" to player
+
+command /deleteleaderboard:
+	permission: leaderboard.admin
+	permission message: <#FF0000>You don't have permission to do that!
+	trigger:
+		loop {lb::boardlocation::*}:
+			if world of loop-value is world of player:
+				if distance between loop-value and player < 5:
+					set {_id} to loop-index
+		if {_id} is not set:
+			send "<#FF0000>There is no leaderboard within 5 blocks!" to player
+			stop
+		loop all text displays in radius 1 around {lb::boardlocation::%{_id}%}:
+			if loop-entity has scoreboard tag "leaderboard%{_id}%":
+				kill loop-entity
+		delete {lb::boardlocation::%{_id}%}
+		delete {lb::boardyaw::%{_id}%}
+		delete {lb::boardtype::%{_id}%}
+		delete {lb::boardamount::%{_id}%}
+		delete {lb::boardfacing::%{_id}%}
+		send "<#18FF00>Leaderboard deleted!" to player
+
+command /topkills:
+	trigger:
+		lbOpenTop(player, "kills")
+
+command /topdeaths:
+	trigger:
+		lbOpenTop(player, "deaths")
+
+command /topkillstreak:
+	trigger:
+		lbOpenTop(player, "killstreak")
+
+command /topplaytime:
+	trigger:
+		lbOpenTop(player, "playtime")
+
+command /topbal:
+	aliases: baltop, topmoney
+	trigger:
+		lbOpenTop(player, "money")
+
+on tab complete of "/createleaderboard":
+	set tab completions for position 1 to "kills", "deaths", "killstreak", "playtime" and "money"
+	set tab completions for position 2 to "5" and "10"
+	set tab completions for position 3 to "yes" and "no"
+
+on inventory click:
+	set {_title} to name of player's current inventory
+	if {_title} is {@kills-title} or {@deaths-title} or {@killstreak-title} or {@playtime-title} or {@money-title}:
+		cancel event
+
+on quit:
+	lbSave(player)
+
+every 1 minute:
+	loop all players:
+		lbSave(loop-player)
+
+every {@update-time}:
+	loop {lb::boardtype::*}:
+		set {_location} to {lb::boardlocation::%loop-index%}
+		if size of all players in radius 48 around {_location} > 0:
+			lbUpdate(loop-index)
