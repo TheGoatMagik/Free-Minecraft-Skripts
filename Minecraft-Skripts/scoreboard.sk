@@ -123,3 +123,45 @@ command /stats [<player>]:
 			send ""
 			send formatted "<#E6CD00>💲 ᴍ<#EAD52B>ᴏ<#EEDE55>ɴ<#F3E680>ᴇ<#F7EEAA>ʏ <#FFFFFF>» <#E6CD00>%{money.%player%}%"
 			send ""
+
+#======= Set stats of others =======
+command /statset <player> <text> <integer>:
+	aliases: setstat
+	permission: set.stats
+	trigger:
+		if arg-3 is less than 0:
+			stop
+		if arg-2 is "kills" or "Kills":
+			set {kills.%arg-1%} to arg-3
+			send "<#FFE700>Kills <#18FF00>of <#FFE700>%arg-1% <#18FF00>have been set to <#FFE700>%arg-3%<#18FF00>!"
+			reloadScoreboard(arg-1)
+			send "<#18FF00>Your <#FFE700>Kills <#18FF00>have been set to <#FFE700>%arg-3%<#18FF00>!" to arg-1
+			stop
+		else if arg-2 is "deaths" or "Deaths":
+			set {deaths.%arg-1%} to arg-3
+			send "<#FFE700>Deaths <#18FF00>of <#FFE700>%arg-1% <#18FF00>have been set to <#FFE700>%arg-3%<#18FF00>!"
+			reloadScoreboard(arg-1)
+			send "<#18FF00>Your <#FFE700>Deaths <#18FF00>have been set to <#FFE700>%arg-3%<#18FF00>!" to arg-1
+			stop
+		else if arg-2 is "money" or "Money":
+			set {money.%arg-1%} to arg-3
+			send "<#FFE700>Money <#18FF00>of <#FFE700>%arg-1% <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!"
+			reloadScoreboard(arg-1)
+			send "<#18FF00>Your <#FFE700>Money <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!" to arg-1
+			stop
+		else if arg-2 is "killstreak" or "Killstreak":
+			set {killstreak.%arg-1%} to arg-3
+			send "<#FFE700>Killstreak <#18FF00>of <#FFE700>%arg-1% <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!"
+			reloadScoreboard(arg-1)
+			send "<#18FF00>Your <#FFE700>Killstreak <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!" to arg-1
+			stop
+		else if arg-2 is "topkillstreak" or "Topkillstreak":
+			set {topkillstreak.%arg-1%} to arg-3
+			send "<#FFE700>Top Killstreak <#18FF00>of <#FFE700>%arg-1% <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!"
+			reloadScoreboard(arg-1)
+			send "<#18FF00>Your <#FFE700>Top Killstreak <#18FF00>has been set to <#FFE700>%arg-3%<#18FF00>!" to arg-1
+			stop
+        
+on tab complete of "/statset" or "/setstat":
+	set tab completions for position 1 to all players
+	set tab completions for position 2 to "kills", "Kills", "deaths", "Deaths", "killstreak", "Killstreak", "topkillstreak" , "Topkillstreak", "money" and "Money"
