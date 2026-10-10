@@ -17,8 +17,8 @@ on damage:
 			add {_auuid} to {combat::*}
 			set {combat.%victim%} to {@combattime}
 			set {combat.%attacker%} to {@combattime}
-			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for {@combattime} seconds!" to victim
-			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>You are in combat for {@combattime} seconds!" to attacker
+			send actionbar "<#FF0000>Combat: {@combattime} seconds" to victim
+			send actionbar "<#FF0000>Combat: {@combattime} seconds" to attacker
 
 #======= Combat duration decrease =======
 every 1 second:
@@ -26,9 +26,9 @@ every 1 second:
 		set {_p} to loop-value parsed as player
 		subtract 1 from {combat.%{_p}%}
 		if {combat.%{_p}%} is more than 0:
-			send actionbar "&8[<#F3CF00>Combatsystem&8] <#FF0000>Combat: %{combat.%{_p}%}% seconds" to {_p}
+			send actionbar "<#FF0000>Combat: %{combat.%{_p}%}% seconds" to {_p}
 		if {combat.%{_p}%} = 0:
-			send "&8[<#F3CF00>Combatsystem&8] <#18FF00>Combat ended!" to {_p}
+			send "<#18FF00>Combat ended!" to {_p}
 			delete {combat.%{_p}%}
 			remove {_p}'s uuid from {combat::*}
 
@@ -51,3 +51,9 @@ on join:
 on death:
 	if {combat.%victim%} > 0:
 		set {combat.%victim%} to 0
+
+#======= Cancel commands while in combat =======
+on command:
+	if {combat.%player%} is set:
+		cancel event
+		send "&8[<#F3CF00>Combatsystem&8] <#FF0000>No Commands during Combat!"
