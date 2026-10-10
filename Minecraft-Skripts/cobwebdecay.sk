@@ -1,0 +1,6 @@
+on place:
+	if event-block is cobweb:
+		set {_loc} to location of event-block
+		wait 15 seconds
+		if block at {_loc} is cobweb:
+			set block at {_loc} to air
