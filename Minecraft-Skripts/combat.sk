@@ -17,8 +17,8 @@ on damage:
 			add {_auuid} to {combat::*}
 			set {combat.%victim%} to {@combattime}
 			set {combat.%attacker%} to {@combattime}
-			send actionbar "<#FF0000>Combat: {@combattime} seconds" to victim
-			send actionbar "<#FF0000>Combat: {@combattime} seconds" to attacker
+			send actionbar "<#FF0000>ᴄ<#FF1D1D>ᴏ<#FF3939>ᴍ<#FF5656>ʙ<#FE7272>ᴀ<#FE8F8F>ᴛ <#FEC8C8>» <#FF0000>{@combattime} ꜱ" to victim
+			send actionbar "<#FF0000>ᴄ<#FF1D1D>ᴏ<#FF3939>ᴍ<#FF5656>ʙ<#FE7272>ᴀ<#FE8F8F>ᴛ <#FEC8C8>» <#FF0000>{@combattime} ꜱ" to attacker
 
 #======= Combat duration decrease =======
 every 1 second:
@@ -26,7 +26,7 @@ every 1 second:
 		set {_p} to loop-value parsed as player
 		subtract 1 from {combat.%{_p}%}
 		if {combat.%{_p}%} is more than 0:
-			send actionbar "<#FF0000>Combat: %{combat.%{_p}%}% seconds" to {_p}
+			send actionbar "<#FF0000>ᴄ<#FF1D1D>ᴏ<#FF3939>ᴍ<#FF5656>ʙ<#FE7272>ᴀ<#FE8F8F>ᴛ <#FEC8C8>» <#FF0000>%{combat.%{_p}%}% ꜱ" to {_p}
 		if {combat.%{_p}%} = 0:
 			send "<#18FF00>Combat ended!" to {_p}
 			delete {combat.%{_p}%}
