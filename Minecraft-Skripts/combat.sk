@@ -54,6 +54,8 @@ on death:
 
 #======= Cancel commands while in combat =======
 on command:
+	if player has permission "combat.usecommands":
+		stop
 	if {combat.%player%} is set:
 		cancel event
 		send "&8[<#F3CF00>Combatsystem&8] <#FF0000>No Commands during Combat!"
