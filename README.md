@@ -1,27 +1,46 @@
-# Minecraft-Skripts
-Some Minecraft Skripts that are useful for most servers
+# Free-Minecraft-Skripts
+
+# About 📖
+
+These Scripts use:
+- Skript 2.14.3 and higher
+- SkBee v3.16.1 and higher
+- Minecraft Server version 1.21.11 and higher
+
+Please read all the lines that start with a #.
+
+---
+# What you can do ✅
+
+- Edit Messages
+- Edit Permissions
+- Edit Options
+- Use these for your server (Please give credit)
+
+---
+
+# What you can't do 🚫
+
+- Reupload/sell the Codes
+- Edit the Codes, unless you know what you are doing
+
+---
+
+# Troubleshooting ❌
+
+If you have any problems with the Codes, feel free to open Issues.
+
+# Unfinished ⌛
+
+Some of these Scripts might be unfinished. If this is the case, there will be a note at the top.
+More Scripts will be coming in the Future.
 
 
-## **Tested all skripts with:**
 
-- Skript 2.14.3
-- SkBee v3.16.1
-- Minecraft Server version 1.21.11
 
-## **🔒 Permissions:**
 
-You can change the player permissions for every file aswell as some of the messages.
 
-## **❌ Troubleshooting:**
 
-If a script is not working for you, please check your plugins and their versions. If you are sure, that the script is the problem, please tell me. If you find Bugs, please let me know.
-
-## **❗️ Important:**
-
-Please read all lines that begin with a "#" before using these scripts.
-You can replace all Hex Colorcodes aswell as names or messages ("...") with your own.
-
-## **⌨️ Unfinished:**
 
 I'm still working on this, but if you have more Ideas, let me know!
 
