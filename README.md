@@ -35,16 +35,11 @@ If you have any problems with the Codes, feel free to open Issues.
 Some of these Scripts might be unfinished. If this is the case, there will be a note at the top.
 More Scripts will be coming in the Future.
 
+# Ideas 💡
+
+If you have more Ideas, let me know or open a PR.
 
 
 
 
-
-
-
-I'm still working on this, but if you have more Ideas, let me know!
-
-## **🔄 Credits:**
-
-If you use these for real Minecraft-Servers, It would be nice to give credits, but that's up to you.
 
