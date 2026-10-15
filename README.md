@@ -1,5 +1,7 @@
 # Free-Minecraft-Skripts
 
+---
+
 # About 📖
 
 These Scripts use:
@@ -30,15 +32,20 @@ Please read all the lines that start with a #.
 
 If you have any problems with the Codes, feel free to open Issues.
 
+---
+
 # Unfinished ⌛
 
 Some of these Scripts might be unfinished. If this is the case, there will be a note at the top.
 More Scripts will be coming in the Future.
 
+---
+
 # Ideas 💡
 
 If you have more Ideas, let me know or open a PR.
 
+---
 
 
 
